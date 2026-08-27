@@ -262,6 +262,62 @@ export interface ProblemUserStatsResponse {
   acceptanceRate: number;
 }
 
+// Analytics, Streaks, XP & Gamification Models
+export interface UserStreakDto {
+  currentStreak: number;
+  longestStreak: number;
+  lastActivityDate?: string;
+  streakFreezeCount: number;
+}
+
+export interface UserXpDto {
+  totalXp: number;
+  currentLevel: number;
+  xpForCurrentLevel: number;
+  xpForNextLevel: number;
+  levelProgressPercentage: number;
+}
+
+export interface BadgeDto {
+  code: string;
+  name: string;
+  description: string;
+  iconName: string;
+  category: string;
+  xpReward: number;
+  unlocked: boolean;
+  unlockedAt?: string;
+}
+
+export interface DailyActivityDto {
+  date: string;
+  count: number;
+  xpEarned: number;
+}
+
+export interface TopicSkillDto {
+  categoryName: string;
+  categorySlug: string;
+  score: number;
+}
+
+export interface LeaderboardUserDto {
+  rank: number;
+  username: string;
+  currentLevel: number;
+  totalXp: number;
+  problemsSolved: number;
+}
+
+export interface AnalyticsOverviewResponse {
+  userStreak: UserStreakDto;
+  userXp: UserXpDto;
+  totalBadgesUnlocked: number;
+  totalBadgesAvailable: number;
+  recentBadges: BadgeDto[];
+  topicSkills: TopicSkillDto[];
+}
+
 // Visualization Request & Response Models
 export interface GraphEdgeDto {
   from: string;

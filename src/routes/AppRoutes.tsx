@@ -9,6 +9,7 @@ import { ProblemDetailPage } from '../pages/ProblemDetailPage';
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { DashboardPage } from '../pages/DashboardPage';
+import { AnalyticsPage } from '../pages/AnalyticsPage';
 import { FavoritesPage } from '../pages/FavoritesPage';
 import { AdminPage } from '../pages/AdminPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
@@ -30,6 +31,7 @@ export const AppRoutes: React.FC = () => {
       {/* Protected Routes (Authenticated Users) */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
       </Route>
 

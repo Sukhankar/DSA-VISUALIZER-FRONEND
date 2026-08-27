@@ -17,12 +17,11 @@ import {
   PlayCircle,
   CheckCircle,
   Star,
-  Sparkles,
-  Compass,
   ArrowRight,
   Terminal,
   Target,
   Award,
+  Trophy,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -89,22 +88,22 @@ export const DashboardPage: React.FC = () => {
             Welcome back, <span className="text-indigo-400">{user?.username}</span>!
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Track algorithm visualization progress and problem solving achievements in real time.
+            Track algorithm visualization progress, practice problem stats, and gamification rewards in real time.
           </p>
         </div>
 
         {/* Quick Navigate Actions */}
         <div className="flex items-center gap-3">
+          <Link to="/analytics">
+            <button className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-md shadow-amber-600/20 cursor-pointer">
+              <Trophy className="w-4 h-4" />
+              <span>Analytics & Badges</span>
+            </button>
+          </Link>
           <Link to="/problems">
             <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-md shadow-indigo-600/20 cursor-pointer">
               <Terminal className="w-4 h-4" />
-              <span>Practice Problems</span>
-            </button>
-          </Link>
-          <Link to="/favorites">
-            <button className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer">
-              <Star className="w-4 h-4 text-amber-400" />
-              <span>Favorites ({data.favoriteAlgorithms})</span>
+              <span>Practice Hub</span>
             </button>
           </Link>
         </div>
@@ -220,16 +219,16 @@ export const DashboardPage: React.FC = () => {
       {/* Grid Section 4: Quick Action Panel */}
       <Card className="p-6 bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center md:text-left">
-          <h3 className="text-base font-bold text-slate-100">Ready to practice coding challenges?</h3>
+          <h3 className="text-base font-bold text-slate-100">Ready to unlock badges & level up?</h3>
           <p className="text-xs text-slate-400 max-w-lg">
-            Solve problems using Java, Python, JavaScript, or C++ with automated test case evaluation.
+            Solve problems using Java, Python, JavaScript, or C++ and view algorithm visualizations to earn XP and maintain your streak.
           </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <Link to="/problems">
-            <button className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
-              <span>Go to Practice Hub</span>
+          <Link to="/analytics">
+            <button className="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-amber-600/30 transition-all cursor-pointer">
+              <span>View Analytics & Trophy Showcase</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </Link>

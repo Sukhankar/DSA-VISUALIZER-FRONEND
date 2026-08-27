@@ -14,6 +14,7 @@ import {
   User as UserIcon,
   Star,
   Terminal,
+  Trophy
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -88,6 +89,16 @@ export const Navbar: React.FC = () => {
                 >
                   <LayoutDashboard className="w-4 h-4 text-slate-400" />
                   Dashboard
+                </Link>
+
+                <Link
+                  to="/analytics"
+                  className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    isActive('/analytics') ? 'text-indigo-400 font-semibold' : 'text-slate-300 hover:text-slate-100'
+                  }`}
+                >
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  <span>Analytics & Badges</span>
                 </Link>
 
                 <Link
@@ -201,6 +212,13 @@ export const Navbar: React.FC = () => {
                 className="block py-2 text-sm font-medium text-slate-200 hover:text-indigo-400"
               >
                 Dashboard
+              </Link>
+              <Link
+                to="/analytics"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 text-sm font-medium text-slate-200 hover:text-indigo-400"
+              >
+                Analytics & Badges
               </Link>
               <Link
                 to="/favorites"
