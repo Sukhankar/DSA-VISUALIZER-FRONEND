@@ -14,8 +14,10 @@ import {
   User as UserIcon,
   Star,
   Terminal,
-  Trophy
+  Trophy,
+  Swords
 } from 'lucide-react';
+
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -82,6 +84,16 @@ export const Navbar: React.FC = () => {
             {isAuthenticated && (
               <>
                 <Link
+                  to="/practice"
+                  className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    isActive('/practice') ? 'text-emerald-400 font-semibold' : 'text-slate-300 hover:text-slate-100'
+                  }`}
+                >
+                  <Swords className="w-4 h-4 text-emerald-400" />
+                  <span>Practice Arena</span>
+                </Link>
+
+                <Link
                   to="/dashboard"
                   className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                     isActive('/dashboard') ? 'text-indigo-400 font-semibold' : 'text-slate-300 hover:text-slate-100'
@@ -90,6 +102,7 @@ export const Navbar: React.FC = () => {
                   <LayoutDashboard className="w-4 h-4 text-slate-400" />
                   Dashboard
                 </Link>
+
 
                 <Link
                   to="/analytics"

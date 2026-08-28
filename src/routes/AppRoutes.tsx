@@ -15,6 +15,9 @@ import { AdminPage } from '../pages/AdminPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
+import { PracticeArenaPage } from '../pages/PracticeArenaPage';
+import { PracticeSessionPage } from '../pages/PracticeSessionPage';
+
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
@@ -30,10 +33,13 @@ export const AppRoutes: React.FC = () => {
 
       {/* Protected Routes (Authenticated Users) */}
       <Route element={<ProtectedRoute />}>
+        <Route path="/practice" element={<PracticeArenaPage />} />
+        <Route path="/practice/session/:id" element={<PracticeSessionPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
       </Route>
+
 
       {/* Role-Guarded Routes (ROLE_ADMIN Users) */}
       <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN" />}>

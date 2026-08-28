@@ -396,3 +396,73 @@ export interface ApiErrorResponse {
   timestamp?: string;
   errors?: Record<string, string>;
 }
+
+// Practice Arena & Session Models (Phase 15)
+export type PracticeMode = 'DAILY' | 'QUICK' | 'TOPIC' | 'RANDOM' | 'TIMED' | 'STREAK';
+export type SessionStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED' | 'EXPIRED';
+export type SessionProblemStatus = 'UNATTEMPTED' | 'ATTEMPTED' | 'SOLVED';
+
+export interface DailyChallengeDto {
+  id: string;
+  challengeDate: string;
+  problem: ProblemSummary;
+  bonusXp: number;
+  completed: boolean;
+  status: string;
+}
+
+export interface PracticeSessionProblemDto {
+  id: string;
+  orderIndex: number;
+  problem: ProblemSummary;
+  status: SessionProblemStatus;
+  submissionId?: string;
+  solvedAt?: string;
+}
+
+export interface PracticeSessionDto {
+  id: string;
+  mode: PracticeMode;
+  status: SessionStatus;
+  difficulty?: Difficulty;
+  categoryName?: string;
+  timeLimitSeconds?: number;
+  totalProblems: number;
+  solvedProblems: number;
+  score: number;
+  xpEarned: number;
+  accuracyPercentage: number;
+  startedAt: string;
+  completedAt?: string;
+  problems: PracticeSessionProblemDto[];
+}
+
+export interface PracticeArenaOverviewResponse {
+  dailyChallenge: DailyChallengeDto;
+  streak: UserStreakDto;
+  xp: UserXpDto;
+  activeSession?: PracticeSessionDto;
+  totalCompletedSessions: number;
+  recentSessions: PracticeSessionDto[];
+}
+
+export interface CreatePracticeSessionRequest {
+  mode: PracticeMode;
+  difficulty?: Difficulty;
+  categoryId?: string;
+  timeLimitSeconds?: number;
+}
+
+export interface SessionSubmitRequest {
+  problemId: string;
+  language: string;
+  code: string;
+}
+
+export interface SessionSubmitResponse {
+  submission: SubmissionResponse;
+  session: PracticeSessionDto;
+  sessionCompleted: boolean;
+  xpEarnedInAttempt: number;
+}
+
