@@ -15,8 +15,15 @@ import { AdminPage } from '../pages/AdminPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
+import { ProfilePage } from '../pages/ProfilePage';
+import { AchievementsPage } from '../pages/AchievementsPage';
+import { BadgesPage } from '../pages/BadgesPage';
 import { PracticeArenaPage } from '../pages/PracticeArenaPage';
 import { PracticeSessionPage } from '../pages/PracticeSessionPage';
+
+import { RoadmapPage } from '../pages/RoadmapPage';
+import { AssessmentPage } from '../pages/AssessmentPage';
+import { TopicPathPage } from '../pages/TopicPathPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -33,9 +40,18 @@ export const AppRoutes: React.FC = () => {
 
       {/* Protected Routes (Authenticated Users) */}
       <Route element={<ProtectedRoute />}>
+        <Route path="/roadmap" element={<RoadmapPage />} />
+        <Route path="/roadmap/assessment" element={<AssessmentPage />} />
+        <Route path="/onboarding" element={<AssessmentPage />} />
+        <Route path="/roadmap/topics/:slug" element={<TopicPathPage />} />
+        <Route path="/roadmap/:moduleSlug" element={<TopicPathPage />} />
+
         <Route path="/practice" element={<PracticeArenaPage />} />
         <Route path="/practice/session/:id" element={<PracticeSessionPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/badges" element={<BadgesPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
       </Route>

@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { VisualizationResponse, VisualizationStep } from '../../types';
+import { VisualizationResponse, VisualizationStep, AlgorithmImplementation } from '../../types';
 import { ArrayVisualizer } from './ArrayVisualizer';
 import { GraphVisualizer } from './GraphVisualizer';
+import { TreeVisualizationPanel } from './TreeVisualizationPanel';
+import { LinkedListVisualizationPanel } from './LinkedListVisualizationPanel';
 import { PlaybackControls } from './PlaybackControls';
 import { StepTimeline } from './StepTimeline';
+import { CodeExecutionPanel } from './CodeExecutionPanel';
 import { userActivityService } from '../../api/userActivityService';
 import { EmptyState } from '../ui/EmptyState';
 
@@ -11,13 +14,16 @@ interface VisualizationPlayerProps {
   response: VisualizationResponse;
   slug: string;
   isAuthenticated?: boolean;
+  implementations?: AlgorithmImplementation[];
 }
 
 export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
   response,
   slug,
   isAuthenticated = false,
+  implementations,
 }) => {
+
   const { steps, visualizationType } = response;
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -159,15 +165,16 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
     );
   }
 
+  const isTreeAlgo = slug.includes('tree') || slug.includes('bst') || slug.includes('heap');
+  const isLinkedListAlgo = slug.includes('linked-list') || slug.includes('list');
+
   return (
     <div className="space-y-6">
       {/* Visual Canvas Renderer Router */}
-      {visualizationType === 'ARRAY' ? (
-        <ArrayVisualizer
-          array={currentStepData?.array || []}
-          indices={currentStepData?.indices || []}
-          action={currentStepData?.action}
-        />
+      {isTreeAlgo ? (
+        <TreeVisualizationPanel step={currentStepData} />
+      ) : isLinkedListAlgo ? (
+        <LinkedListVisualizationPanel step={currentStepData} />
       ) : visualizationType === 'GRAPH' ? (
         <GraphVisualizer
           nodes={response.steps[0]?.visitedNodes ? Array.from(new Set(response.steps.flatMap(s => [...(s.visitedNodes || []), ...(s.frontier || []), s.currentNode].filter(Boolean) as string[]))) : undefined}
@@ -177,9 +184,10 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
           action={currentStepData?.action}
         />
       ) : (
-        <EmptyState
-          title="Visualization Type Not Supported"
-          description={`Visualization renderer for ${visualizationType} is coming soon.`}
+        <ArrayVisualizer
+          array={currentStepData?.array || []}
+          indices={currentStepData?.indices || []}
+          action={currentStepData?.action}
         />
       )}
 
@@ -205,6 +213,10 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
         onJumpToEnd={handleJumpToEnd}
         onSpeedChange={setSpeed}
       />
+
+      {/* Interactive Step-by-Step Code Execution Panel */}
+      <CodeExecutionPanel slug={slug} currentStepData={currentStepData} implementations={implementations} />
     </div>
   );
 };
+

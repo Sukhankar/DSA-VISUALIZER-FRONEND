@@ -42,3 +42,8 @@ export const algorithmService = {
     return response.data;
   },
 };
+
+export const getAlgorithms = algorithmService.getAlgorithms;
+export const getAllCategories = algorithmService.getAllCategories;
+export const getAlgorithmBySlug = algorithmService.getAlgorithmBySlug;
+export const getRichAlgorithmDetails = algorithmService.getRichAlgorithmDetails;

@@ -22,11 +22,11 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Handle 401 Unauthorized globally
+// Response Interceptor: Handle 401 Unauthorized / 403 Forbidden globally
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       const currentToken = tokenStorage.getToken();
       if (currentToken) {
         tokenStorage.removeToken();

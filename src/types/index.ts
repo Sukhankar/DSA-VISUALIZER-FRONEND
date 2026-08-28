@@ -1,5 +1,6 @@
 // Enums & String Literal Types
-export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD' | 'EXTREME_HARD';
+
 export type UserRole = 'ROLE_USER' | 'ROLE_ADMIN';
 export type ProgressStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
 
@@ -465,4 +466,220 @@ export interface SessionSubmitResponse {
   sessionCompleted: boolean;
   xpEarnedInAttempt: number;
 }
+
+// User Profile & Gamification UI Models (Phase 16)
+export interface UserProfileUpdateRequest {
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  country?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+}
+
+export interface LevelProgressDto {
+  currentLevel: number;
+  title: string;
+  currentXp: number;
+  xpInCurrentLevel: number;
+  xpRequiredForNextLevel: number;
+  levelXpSpan: number;
+  progressPercentage: number;
+}
+
+export interface StreakStatusDto {
+  currentStreak: number;
+  longestStreak: number;
+  lastActivityDate?: string;
+  activeToday: boolean;
+  streakFreezeCount: number;
+  nextMilestoneDays: number;
+  daysToNextMilestone: number;
+}
+
+export interface AchievementItemDto {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: string;
+  rarity: string;
+  xpReward: number;
+  requirementType: string;
+  requirementValue: number;
+  unlocked: boolean;
+  unlockedAt?: string;
+  currentValue: number;
+  progressPercentage: number;
+}
+
+export interface BadgeItemDto {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  iconName: string;
+  category: string;
+  rarity: string;
+  xpReward: number;
+  earned: boolean;
+  earnedAt?: string;
+}
+
+export interface UserActivityDto {
+  id: string;
+  activityType: string;
+  referenceType?: string;
+  referenceId?: string;
+  xpEarned: number;
+  metadata?: string;
+  createdAt: string;
+}
+
+export interface UserProfileDto {
+  id: string;
+  userId: string;
+  username: string;
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  country?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  totalXp: number;
+  currentLevel: number;
+  currentStreak: number;
+  longestStreak: number;
+  totalProblemsSolved: number;
+  totalAlgorithmsCompleted: number;
+  totalPracticeSessions: number;
+  createdAt: string;
+  updatedAt: string;
+  levelProgress?: LevelProgressDto;
+  streakStatus?: StreakStatusDto;
+}
+
+export interface GamificationSummaryDto {
+  level: number;
+  totalXp: number;
+  levelProgress: LevelProgressDto;
+  currentStreak: number;
+  longestStreak: number;
+  totalProblemsSolved: number;
+  totalAlgorithmsCompleted: number;
+  totalPracticeSessions: number;
+  achievementsUnlocked: number;
+  totalAchievements: number;
+  badgesEarned: number;
+  totalBadges: number;
+  recentActivity: UserActivityDto[];
+}
+
+export type RoadmapTier = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+export type RoadmapStepType = 'LEARN' | 'VISUALIZE' | 'PRACTICE' | 'CHALLENGE' | 'MASTER';
+export type RoadmapStatus = 'LOCKED' | 'IN_PROGRESS' | 'COMPLETED';
+
+export interface RoadmapStepDto {
+  id: string;
+  stepNumber: number;
+  stepType: RoadmapStepType;
+  title: string;
+  description: string;
+  referenceSlug?: string;
+  xpReward: number;
+  completed: boolean;
+}
+
+export interface RoadmapModuleDto {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  orderIndex: number;
+  tier: RoadmapTier;
+  iconName: string;
+  categorySlug?: string;
+  prerequisiteModuleSlug?: string;
+  prerequisiteModuleTitle?: string;
+  xpReward: number;
+  status: RoadmapStatus;
+  completionPercentage: number;
+  steps?: RoadmapStepDto[];
+}
+
+export interface AssessmentRequestDto {
+  experienceLevel: RoadmapTier;
+  preferredLanguage?: string;
+  knowsArrays?: boolean;
+  knowsSorting?: boolean;
+  knowsTrees?: boolean;
+  solvedProblemsBefore?: boolean;
+  goal?: string;
+}
+
+export interface AssessmentResultDto {
+  assessmentId: string;
+  assignedTier: RoadmapTier;
+  recommendedModuleSlug: String;
+  recommendedModuleTitle: String;
+  summaryMessage: string;
+  bonusXpEarned: number;
+}
+
+export interface NextRecommendationDto {
+  moduleSlug: string;
+  moduleTitle: string;
+  stepTitle: string;
+  stepType: string;
+  referenceSlug?: string;
+  actionUrl: string;
+  recommendationReason: string;
+  xpReward: number;
+}
+
+export type ExperienceLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+export type PrimaryGoal = 'LEARN_DSA' | 'INTERVIEW_PREPARATION' | 'COMPETITIVE_PROGRAMMING' | 'IMPROVE_PROBLEM_SOLVING' | 'COLLEGE_STUDY';
+
+export interface LearningPathDto {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  difficulty: ExperienceLevel;
+  estimatedDuration: string;
+  displayOrder: number;
+  isActive: boolean;
+  modules?: RoadmapModuleDto[];
+}
+
+export interface UserLearningPreferenceDto {
+  experienceLevel: ExperienceLevel;
+  preferredLanguage: string;
+  dailyLearningMinutes: number;
+  primaryGoal: PrimaryGoal;
+  completedAssessment: boolean;
+}
+
+export interface LearningRecommendationDto {
+  type: string;
+  title: string;
+  description: string;
+  slug: string;
+  progress: number;
+  xpReward: number;
+  actionLabel: string;
+  actionUrl: string;
+}
+
+export interface UserRoadmapDto {
+  path: {
+    slug?: string;
+    name?: string;
+  };
+  overallProgress: number;
+  currentModule: RoadmapModuleDto | null;
+  modules: RoadmapModuleDto[];
+}
+
 

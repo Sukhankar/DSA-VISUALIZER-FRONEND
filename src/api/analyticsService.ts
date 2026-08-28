@@ -31,5 +31,11 @@ export const analyticsService = {
   getLeaderboard: async (limit: number = 10): Promise<LeaderboardUserDto[]> => {
     const response = await apiClient.get<LeaderboardUserDto[]>(`/analytics/leaderboard?limit=${limit}`);
     return response.data;
+  },
+
+  getXpTimeline: async (): Promise<DailyActivityDto[]> => {
+    const response = await apiClient.get<DailyActivityDto[]>('/analytics/xp-timeline');
+    return response.data;
   }
 };
+

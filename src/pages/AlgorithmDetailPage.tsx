@@ -110,7 +110,7 @@ export const AlgorithmDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-16">
+    <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1800px] mx-auto space-y-8 pb-16">
       {/* Back Navigation Bar */}
       <div className="flex items-center justify-between">
         <Link
@@ -130,12 +130,17 @@ export const AlgorithmDetailPage: React.FC = () => {
             {getDifficultyBadge(algorithm.difficulty)}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <FavoriteButton
               algorithmSlug={algorithm.slug}
               initialFavorite={isFavorite}
               variant="button"
             />
+            <Link to={`/practice/arena?algorithm=${algorithm.slug}`}>
+              <Button variant="secondary" size="md">
+                Practice This Algorithm
+              </Button>
+            </Link>
             <Link to={`/visualize/${algorithm.slug}`}>
               <Button variant="primary" size="md" leftIcon={<Play className="w-4 h-4 fill-white" />}>
                 Launch Visualizer
@@ -143,6 +148,7 @@ export const AlgorithmDetailPage: React.FC = () => {
             </Link>
           </div>
         </div>
+
 
         <div>
           <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight">

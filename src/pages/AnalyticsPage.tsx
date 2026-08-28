@@ -12,12 +12,15 @@ import { ActivityHeatmap } from '../components/analytics/ActivityHeatmap';
 import { TopicSkillRadar } from '../components/analytics/TopicSkillRadar';
 import { BadgesShowcase } from '../components/analytics/BadgesShowcase';
 import { LeaderboardTable } from '../components/analytics/LeaderboardTable';
+import { XpTimelineChart } from '../components/analytics/XpTimelineChart';
+import { WeeklyProgressBar } from '../components/analytics/WeeklyProgressBar';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 
 export const AnalyticsPage: React.FC = () => {
   const [overview, setOverview] = useState<AnalyticsOverviewResponse | null>(null);
   const [heatmap, setHeatmap] = useState<DailyActivityDto[]>([]);
+  const [xpTimeline, setXpTimeline] = useState<DailyActivityDto[]>([]);
   const [allBadges, setAllBadges] = useState<BadgeDto[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUserDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,15 +31,17 @@ export const AnalyticsPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const [overviewRes, heatmapRes, badgesRes, leaderboardRes] = await Promise.all([
+        const [overviewRes, heatmapRes, timelineRes, badgesRes, leaderboardRes] = await Promise.all([
           analyticsService.getOverview(),
           analyticsService.getHeatmap(),
+          analyticsService.getXpTimeline().catch(() => []),
           analyticsService.getBadges(),
           analyticsService.getLeaderboard(10)
         ]);
 
         setOverview(overviewRes);
         setHeatmap(heatmapRes);
+        setXpTimeline(timelineRes);
         setAllBadges(badgesRes);
         setLeaderboard(leaderboardRes);
       } catch (err: any) {
@@ -70,10 +75,10 @@ export const AnalyticsPage: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-extrabold text-white tracking-tight">
-          Learning Analytics & Rewards 🏆
+          Learning Analytics & Real-Time Performance 🏆
         </h1>
         <p className="mt-2 text-sm text-slate-400">
-          Track your daily streak, level progression, topic mastery, and earned achievement trophies.
+          Track your daily streak, XP growth, topic mastery, and global leaderboard ranking with live data analytics.
         </p>
       </div>
 
@@ -83,8 +88,14 @@ export const AnalyticsPage: React.FC = () => {
         <LevelXpCard xp={overview.userXp} />
       </div>
 
-      {/* Contribution Heatmap */}
-      <ActivityHeatmap activities={heatmap} />
+      {/* 30-Day XP Growth Chart */}
+      <XpTimelineChart data={xpTimeline} />
+
+      {/* Weekly Activity & Heatmap Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <WeeklyProgressBar activities={heatmap} />
+        <ActivityHeatmap activities={heatmap} />
+      </div>
 
       {/* Middle Section: Radar Chart & Leaderboard */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
