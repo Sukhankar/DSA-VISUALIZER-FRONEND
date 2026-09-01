@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   Copy,
   Check,
+  Zap,
+  XCircle,
 } from 'lucide-react';
 
 interface AlgorithmOverviewCardProps {
@@ -43,14 +45,13 @@ const COMPREHENSIVE_THEORY_DB: Record<string, ComprehensiveAlgorithmTheory> = {
   '0/1-knapsack-problem-dp': {
     whatIsIt:
       'The 0/1 Knapsack Problem is a classic algorithmic optimization problem in Computer Science and Operations Research. Given a set of N items, each with a specific weight and monetary value, along with a knapsack of capacity W, the goal is to choose a subset of items to maximize the total value such that the cumulative weight does not exceed W. The "0/1" constraint dictates that each item must either be taken in its entirety (1) or left behind (0)—fractional items are not allowed.',
-    howItWorks:
-      [
-        'Create a 2D Dynamic Programming table DP of size (N+1) x (W+1), initialized to 0.',
-        'Iterate through each item i from 1 to N, and for each possible sub-capacity w from 0 to W:',
-        'If the weight of item i-1 exceeds capacity w, item i-1 cannot be included: DP[i][w] = DP[i-1][w].',
-        'Otherwise, compute the maximum between excluding the item (DP[i-1][w]) and including it (values[i-1] + DP[i-1][w - weights[i-1]]).',
-        'The cell DP[N][W] contains the optimal maximum value achievable.',
-      ],
+    howItWorks: [
+      'Create a 2D Dynamic Programming table DP of size (N+1) x (W+1), initialized to 0.',
+      'Iterate through each item i from 1 to N, and for each possible sub-capacity w from 0 to W:',
+      'If the weight of item i-1 exceeds capacity w, item i-1 cannot be included: DP[i][w] = DP[i-1][w].',
+      'Otherwise, compute the maximum between excluding the item (DP[i-1][w]) and including it (values[i-1] + DP[i-1][w - weights[i-1]]).',
+      'The cell DP[N][W] contains the optimal maximum value achievable.',
+    ],
     whyUsed:
       'A brute-force solution checks all 2^N possible item subsets, which becomes computationally infeasible for N > 30. Dynamic Programming avoids redundant computations by building solutions to overlapping subproblems, reducing runtime to O(N × W).',
     whereUsed:
@@ -155,7 +156,7 @@ int solveKnapsack(const std::vector<int>& weights, const std::vector<int>& value
   },
   'binary-search': {
     whatIsIt:
-      'Binary Search is a benchmark logarithmic divide-and-conquer searching algorithm. It rapidly locates the position of a target key within a strictly sorted array by repeatedly inspecting the middle element andhalving the search range.',
+      'Binary Search is a benchmark logarithmic divide-and-conquer searching algorithm. It rapidly locates the position of a target key within a strictly sorted array by repeatedly inspecting the middle element and halving the search range.',
     howItWorks: [
       'Initialize pointer low = 0 and high = array.length - 1.',
       'While low <= high, compute middle index mid = low + (high - low) / 2 to prevent integer overflow.',
@@ -356,12 +357,13 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
   const slugKey = algorithm.slug.toLowerCase();
   const dbInfo = COMPREHENSIVE_THEORY_DB[slugKey];
 
+  // Seamless prioritization of Backend API richDetails -> Local Knowledge DB -> Fallbacks
   const whatIsIt =
     richDetails?.overview ||
     dbInfo?.whatIsIt ||
     richDetails?.description ||
     algorithm.description ||
-    `${algorithm.name} is an important algorithm in computer science.`;
+    `${algorithm.name} is an essential algorithm in computer science.`;
 
   const howItWorks = dbInfo?.howItWorks || [
     'Initialize required data structures and state variables.',
@@ -373,46 +375,59 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
   const whyUsed =
     richDetails?.whenToUse ||
     dbInfo?.whyUsed ||
-    `Provides optimal performance when processing ${algorithm.categoryName} problems compared to naive brute-force approaches.`;
+    `Provides optimal performance when solving ${algorithm.categoryName} problems compared to naive brute-force approaches.`;
 
-  const whereUsed =
-    dbInfo?.whereUsed ||
-    'Software systems, query processing engines, technical interview challenges, and enterprise algorithm pipelines.';
+  const advantages =
+    richDetails?.advantages ||
+    '• Optimal time and space complexity bounds for production scale.\n• Invariant-based state transitions ensuring correctness across all inputs.\n• Standard industry usage with wide library support across major programming languages.';
+
+  const limitations =
+    richDetails?.limitations ||
+    '• Requires careful handling of boundary conditions and empty inputs.\n• Performance depends on chosen data structures and memory layout.';
 
   const theory =
     dbInfo?.theory ||
     `Theoretical Complexity Bounds: Operates in ${algorithm.timeComplexity || 'O(N)'} time complexity and ${algorithm.spaceComplexity || 'O(1)'} space complexity.`;
 
-  const edgeCases = dbInfo?.edgeCases || [
-    'Empty input array or single element.',
-    'Input contains duplicates or extreme values.',
-    'Boundary threshold capacities.',
-  ];
+  const edgeCases =
+    (richDetails?.constraints
+      ? richDetails.constraints.split('\n').map((s) => s.trim().replace(/^•\s*/, '')).filter(Boolean)
+      : null) ||
+    dbInfo?.edgeCases || [
+      'Empty input array or single element.',
+      'Input contains duplicates or extreme values.',
+      'Boundary threshold capacities.',
+    ];
 
+  // Examples mapping from Backend API or Knowledge DB
   const examples: AlgorithmicExample[] =
-    dbInfo?.examples ||
-    (richDetails?.examples && richDetails.examples.length > 0
+    richDetails?.examples && richDetails.examples.length > 0
       ? richDetails.examples.map((e) => ({
           title: `Example ${e.exampleNumber}: ${e.title || 'Algorithmic Sample'}`,
           input: e.inputData,
           output: e.outputData,
           explanation: e.explanation || 'Step-by-step logic processing.',
         }))
-      : [
+      : dbInfo?.examples || [
           {
             title: 'Example 1: Default Test Input',
             input: 'Input = [5, 1, 4, 2, 8]',
             output: 'Output = Processed Result',
             explanation: 'Algorithmic state transitions process elements sequentially.',
           },
-        ]);
+        ];
 
-  // Code snippets resolution
-  const codeSnippets = dbInfo?.codeSnippets || {
-    java: richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'JAVA')?.code || '// Code snippet loading...',
-    python: richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'PYTHON')?.code || '# Code snippet loading...',
-    cpp: richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'CPP' || i.language.toUpperCase() === 'C++')?.code || '// Code snippet loading...',
-    javascript: '// JavaScript code implementation...',
+  // Code Snippets resolution from Backend API implementations or Knowledge DB
+  const javaImpl = richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'JAVA')?.code;
+  const pythonImpl = richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'PYTHON')?.code;
+  const cppImpl = richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'CPP' || i.language.toUpperCase() === 'C++')?.code;
+  const jsImpl = richDetails?.implementations?.find((i) => i.language.toUpperCase() === 'JAVASCRIPT' || i.language.toUpperCase() === 'JS')?.code;
+
+  const codeSnippets: Record<string, string> = {
+    java: javaImpl || dbInfo?.codeSnippets?.java || `// Java implementation for ${algorithm.name}`,
+    python: pythonImpl || dbInfo?.codeSnippets?.python || `# Python implementation for ${algorithm.name}`,
+    cpp: cppImpl || dbInfo?.codeSnippets?.cpp || `// C++ implementation for ${algorithm.name}`,
+    javascript: jsImpl || dbInfo?.codeSnippets?.javascript || `// JavaScript implementation for ${algorithm.name}`,
   };
 
   const handleCopyCode = () => {
@@ -519,7 +534,7 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
             </p>
           </div>
 
-          {/* Corner & Edge Cases */}
+          {/* Corner & Edge Cases / Constraints */}
           <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 space-y-1.5">
             <span className="font-extrabold text-amber-400 uppercase text-[10px] tracking-wider block flex items-center gap-1">
               <AlertTriangle className="w-3.5 h-3.5" /> Corner & Edge Cases to Consider
@@ -545,9 +560,16 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
 
           <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 space-y-1.5">
             <span className="font-extrabold text-emerald-400 uppercase text-[10px] tracking-wider block flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Real-World Systems & Industry Applications
+              <Zap className="w-3.5 h-3.5" /> Key Advantages & Strengths
             </span>
-            <p className="text-slate-300 leading-relaxed text-[11px] font-medium">{whereUsed}</p>
+            <p className="text-slate-300 leading-relaxed text-[11px] font-medium whitespace-pre-line">{advantages}</p>
+          </div>
+
+          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 space-y-1.5">
+            <span className="font-extrabold text-rose-400 uppercase text-[10px] tracking-wider block flex items-center gap-1">
+              <XCircle className="w-3.5 h-3.5" /> Limitations & Trade-Offs
+            </span>
+            <p className="text-slate-300 leading-relaxed text-[11px] font-medium whitespace-pre-line">{limitations}</p>
           </div>
         </div>
       )}
