@@ -20,6 +20,9 @@ import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { getErrorMessage } from '../utils/errorUtils';
 import { ArrowLeft, Star, Sparkles, Sliders, BookOpen, Code, Clock, HardDrive, CheckCircle2 } from 'lucide-react';
+import { AlgorithmOverviewCard } from '../components/visualization/AlgorithmOverviewCard';
+
+
 
 export const VisualizationPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -254,61 +257,9 @@ export const VisualizationPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-6 items-start">
         {/* Column 1: Algorithm Overview & Input Config (3 cols on xl) */}
         <div className="lg:col-span-4 xl:col-span-3 space-y-6">
-          {/* 1. Algorithm Overview & Complexities Card */}
-          <Card className="bg-slate-900/90 border-slate-800 p-5 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-3">
-              <BookOpen className="w-4 h-4 text-purple-400" />
-              <span>Algorithm Overview</span>
-            </div>
+          {/* 1. Algorithm Overview & Theory Component */}
+          <AlgorithmOverviewCard algorithm={algorithm} richDetails={richDetails} />
 
-            <p className="text-xs text-slate-300 leading-relaxed">
-              {richDetails?.overview || richDetails?.description || algorithm.description}
-            </p>
-
-            {/* Complexity Badges Grid */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1">
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-                  <Clock className="w-3 h-3 text-emerald-400" />
-                  <span>Time Complexity</span>
-                </div>
-                <span className="text-xs font-mono font-bold text-emerald-400 block">
-                  {algorithm.timeComplexity || 'O(N)'}
-                </span>
-              </div>
-
-              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1">
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-                  <HardDrive className="w-3 h-3 text-cyan-400" />
-                  <span>Space Complexity</span>
-                </div>
-                <span className="text-xs font-mono font-bold text-cyan-400 block">
-                  {algorithm.spaceComplexity || 'O(1)'}
-                </span>
-              </div>
-            </div>
-
-            {/* When To Use */}
-            {richDetails?.whenToUse && (
-              <div className="pt-2 border-t border-slate-800/80 space-y-1">
-                <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                  When To Use
-                </span>
-                <p className="text-xs text-slate-400 leading-relaxed">{richDetails.whenToUse}</p>
-              </div>
-            )}
-
-            {/* Constraints */}
-            {richDetails?.constraints && (
-              <div className="pt-2 border-t border-slate-800/80 space-y-1">
-                <span className="text-xs font-bold text-slate-400 block">Constraints</span>
-                <pre className="text-[11px] font-mono text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 whitespace-pre-wrap">
-                  {richDetails.constraints}
-                </pre>
-              </div>
-            )}
-          </Card>
 
           {/* 2. Input Configuration Card */}
           <Card className="bg-slate-900/90 border-slate-800 p-5 space-y-4">
