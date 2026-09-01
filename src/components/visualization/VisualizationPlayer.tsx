@@ -161,12 +161,19 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
       } else if (e.code === 'ArrowRight') {
         e.preventDefault();
         handleNext();
+      } else if (e.code === 'Home') {
+        e.preventDefault();
+        handleJumpToStart();
+      } else if (e.code === 'End') {
+        e.preventDefault();
+        handleJumpToEnd();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [totalSteps, currentStepIndex, isPlaying]);
+  }, [totalSteps, currentStepIndex, isPlaying, handlePlayPause, handlePrev, handleNext, handleJumpToStart, handleJumpToEnd]);
+
 
   if (!steps || steps.length === 0) {
     return (

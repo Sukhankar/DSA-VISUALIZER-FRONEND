@@ -7,7 +7,17 @@
   --bg-surface: #0B1020;
   --bg-elevated: #101827;
   --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(99, 102, 241, 0.4);
   --border-glow: rgba(124, 108, 255, 0.3);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-info: #06b6d4;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
   --accent-purple: #7C6CFF;
   --accent-blue: #4DA3FF;
   --accent-pink: #E879F9;
@@ -15,6 +25,16 @@
   --accent-emerald: #34D399;
   --accent-amber: #F59E0B;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 
 @layer base {
   body {

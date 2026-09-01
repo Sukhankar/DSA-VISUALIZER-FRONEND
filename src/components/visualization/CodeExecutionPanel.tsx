@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ActionType, VisualizationStep, AlgorithmImplementation } from '../../types';
-import { Code2, Play, Cpu, Check, Layers } from 'lucide-react';
+import { Code2, Play, Cpu, Check, Layers, Variable } from 'lucide-react';
 
 export interface CodeExecutionPanelProps {
   slug: string;
@@ -8,7 +8,7 @@ export interface CodeExecutionPanelProps {
   implementations?: AlgorithmImplementation[];
 }
 
-type SupportedLanguage = 'pseudocode' | 'java' | 'python' | 'cpp';
+type SupportedLanguage = 'pseudocode' | 'java' | 'python' | 'cpp' | 'javascript';
 
 interface LanguageCodeDef {
   lines: string[];
@@ -19,7 +19,6 @@ interface AlgorithmCodeSet {
   title: string;
   languages: Record<SupportedLanguage, LanguageCodeDef>;
 }
-
 
 const ALGORITHM_CODE_SETS: Record<string, AlgorithmCodeSet> = {
   'bubble-sort': {
@@ -105,6 +104,31 @@ const ALGORITHM_CODE_SETS: Record<string, AlgorithmCodeSet> = {
           '            }',
           '        }',
           '    }',
+          '}',
+        ],
+        getActionLine: (action) => {
+          switch (action) {
+            case 'INITIAL': return 1;
+            case 'COMPARE': return 5;
+            case 'SWAP': return 6;
+            case 'NO_SWAP': return 4;
+            case 'COMPLETE': return 10;
+            default: return 5;
+          }
+        },
+      },
+      javascript: {
+        lines: [
+          'function bubbleSort(arr) {',
+          '  const n = arr.length;',
+          '  for (let i = 0; i < n - 1; i++) {',
+          '    for (let j = 0; j < n - i - 1; j++) {',
+          '      if (arr[j] > arr[j + 1]) {',
+          '        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];',
+          '      }',
+          '    }',
+          '  }',
+          '  return arr;',
           '}',
         ],
         getActionLine: (action) => {
@@ -222,6 +246,33 @@ const ALGORITHM_CODE_SETS: Record<string, AlgorithmCodeSet> = {
           }
         },
       },
+      javascript: {
+        lines: [
+          'function quickSort(arr, low = 0, high = arr.length - 1) {',
+          '  if (low < high) {',
+          '    const pivot = arr[high];',
+          '    let i = low - 1;',
+          '    for (let j = low; j < high; j++) {',
+          '      if (arr[j] <= pivot) {',
+          '        i++;',
+          '        [arr[i], arr[j]] = [arr[j], arr[i]];',
+          '      }',
+          '    }',
+          '    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];',
+          '  }',
+          '}',
+        ],
+        getActionLine: (action) => {
+          switch (action) {
+            case 'INITIAL': return 1;
+            case 'SELECT': return 3;
+            case 'COMPARE': return 6;
+            case 'SWAP': return 8;
+            case 'COMPLETE': return 12;
+            default: return 6;
+          }
+        },
+      },
     },
   },
   'binary-search': {
@@ -326,31 +377,55 @@ const ALGORITHM_CODE_SETS: Record<string, AlgorithmCodeSet> = {
           }
         },
       },
+      javascript: {
+        lines: [
+          'function binarySearch(arr, target) {',
+          '  let low = 0, high = arr.length - 1;',
+          '  while (low <= high) {',
+          '    const mid = Math.floor(low + (high - low) / 2);',
+          '    if (arr[mid] === target) return mid;',
+          '    if (arr[mid] < target) low = mid + 1;',
+          '    else high = mid - 1;',
+          '  }',
+          '  return -1;',
+          '}',
+        ],
+        getActionLine: (action) => {
+          switch (action) {
+            case 'INITIAL': return 2;
+            case 'SELECT': return 4;
+            case 'FOUND': return 5;
+            case 'COMPARE': return 6;
+            case 'NOT_FOUND': return 9;
+            case 'COMPLETE': return 9;
+            default: return 4;
+          }
+        },
+      },
     },
   },
 };
-
 
 export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
   slug,
   currentStepData,
   implementations,
 }) => {
-
   const [selectedLang, setSelectedLang] = useState<SupportedLanguage>('java');
 
   const javaImpl = implementations?.find((i) => i.language.toUpperCase() === 'JAVA')?.code;
   const pythonImpl = implementations?.find((i) => i.language.toUpperCase() === 'PYTHON')?.code;
   const cppImpl = implementations?.find((i) => i.language.toUpperCase() === 'CPP' || i.language.toUpperCase() === 'C++')?.code;
+  const jsImpl = implementations?.find((i) => i.language.toUpperCase() === 'JAVASCRIPT' || i.language.toUpperCase() === 'JS')?.code;
 
   const defaultDef: LanguageCodeDef = {
     lines: [
       `function executeAlgorithm(input):`,
-      `  // Initialize data structure`,
+      `  // Initialize state and pointers`,
       `  initializeState(input)`,
-      `  // Process current step`,
+      `  // Process current element step`,
       `  processStep(currentElement)`,
-      `  // Update state`,
+      `  // Update indices and variables`,
       `  updateState(indices)`,
       `  return result`,
     ],
@@ -384,6 +459,11 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
       lines: cppImpl.split('\n'),
       getActionLine: (action) => (action === 'COMPLETE' ? cppImpl.split('\n').length : 3),
     };
+  } else if (selectedLang === 'javascript' && jsImpl) {
+    langDef = {
+      lines: jsImpl.split('\n'),
+      getActionLine: (action) => (action === 'COMPLETE' ? jsImpl.split('\n').length : 3),
+    };
   } else {
     langDef = codeSet?.languages[selectedLang] || defaultDef;
   }
@@ -391,8 +471,6 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
   const activeLineNumber =
     currentStepData?.codeLineMap?.[selectedLang] ??
     langDef.getActionLine(currentStepData?.action);
-
-
 
   const codeContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -404,28 +482,39 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
     }
   }, [activeLineNumber]);
 
+  // Extract runtime variables for inspector
+  const indicesStr =
+    currentStepData?.indices && currentStepData.indices.length > 0
+      ? `[${currentStepData.indices.join(', ')}]`
+      : 'None';
+
+  const valuesStr =
+    currentStepData?.array && currentStepData.indices && currentStepData.indices.length > 0
+      ? currentStepData.indices.map((i) => currentStepData.array?.[i]).filter((v) => v !== undefined).join(', ')
+      : null;
+
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 font-mono select-none">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 font-sans">
       {/* Panel Header with Language Selectors */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-200 uppercase tracking-wider">
           <Code2 className="w-4 h-4 text-emerald-400" />
-          <span>Code Execution Line</span>
+          <span>Code Execution</span>
         </div>
 
         {/* Language Tabs */}
-        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-          {(['pseudocode', 'java', 'python', 'cpp'] as SupportedLanguage[]).map((lang) => (
+        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-full custom-scrollbar">
+          {(['pseudocode', 'java', 'python', 'cpp', 'javascript'] as SupportedLanguage[]).map((lang) => (
             <button
               key={lang}
               onClick={() => setSelectedLang(lang)}
-              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold uppercase transition-colors cursor-pointer whitespace-nowrap ${
                 selectedLang === lang
                   ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              {lang}
+              {lang === 'javascript' ? 'JS' : lang}
             </button>
           ))}
         </div>
@@ -434,7 +523,7 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
       {/* Code Editor Body with Line-by-Line Highlight and max height scrolling */}
       <div
         ref={codeContainerRef}
-        className="bg-slate-950 rounded-xl p-3 border border-slate-900 overflow-y-auto max-h-[300px] text-xs space-y-1 leading-relaxed custom-scrollbar"
+        className="bg-slate-950 rounded-xl p-3 border border-slate-900 overflow-y-auto max-h-[280px] text-xs space-y-1 leading-relaxed custom-scrollbar font-mono"
       >
         {langDef.lines.map((line, idx) => {
           const lineNumber = idx + 1;
@@ -457,8 +546,8 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
                 <span className="whitespace-pre font-mono text-[11px] text-slate-200">{line}</span>
 
                 {isActive && (
-                  <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30 shrink-0 ml-2">
-                    <Play className="w-2 h-2 fill-emerald-400" /> Active
+                  <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30 shrink-0 ml-2 font-sans font-bold">
+                    <Play className="w-2 h-2 fill-emerald-400" /> Line {lineNumber} Active
                   </span>
                 )}
               </div>
@@ -467,27 +556,45 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
         })}
       </div>
 
-
-      {/* Variable & Action State Inspector */}
-      {currentStepData && (
-        <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between">
-            <span className="text-slate-500 font-semibold">Active Indices:</span>
-            <span className="font-bold text-amber-400 font-mono">
-              {currentStepData.indices && currentStepData.indices.length > 0
-                ? `[${currentStepData.indices.join(', ')}]`
-                : 'None'}
+      {/* CURRENT STATE Runtime Variable Inspector (Requirement #9 & #10) */}
+      <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 font-mono text-xs">
+        <div className="flex items-center justify-between border-b border-slate-900 pb-1.5 font-sans">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-cyan-400 flex items-center gap-1">
+            <Variable className="w-3.5 h-3.5" /> Current State Inspector
+          </span>
+          {currentStepData?.action && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-500/30">
+              {currentStepData.action}
             </span>
-          </div>
-
-          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between">
-            <span className="text-slate-500 font-semibold">Step Action:</span>
-            <span className="font-bold text-indigo-400 font-mono">
-              {currentStepData.action || 'IDLE'}
-            </span>
-          </div>
+          )}
         </div>
-      )}
+
+        <div className="grid grid-cols-2 gap-2 text-[11px]">
+          <div className="flex items-center justify-between bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+            <span className="text-slate-500 font-medium">Indices:</span>
+            <span className="font-bold text-amber-400">{indicesStr}</span>
+          </div>
+
+          <div className="flex items-center justify-between bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+            <span className="text-slate-500 font-medium">Current Line:</span>
+            <span className="font-bold text-emerald-400">#{activeLineNumber}</span>
+          </div>
+
+          {valuesStr !== null && (
+            <div className="col-span-2 flex items-center justify-between bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              <span className="text-slate-500 font-medium">Inspected Values:</span>
+              <span className="font-bold text-cyan-300">{valuesStr}</span>
+            </div>
+          )}
+
+          {currentStepData?.currentNode && (
+            <div className="col-span-2 flex items-center justify-between bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              <span className="text-slate-500 font-medium">Current Node:</span>
+              <span className="font-bold text-purple-300">{currentStepData.currentNode}</span>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
