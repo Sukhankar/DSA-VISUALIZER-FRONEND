@@ -83,12 +83,13 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
     return () => clearInterval(timer);
   }, [isPlaying, totalSteps, speed, triggerStartProgress, triggerCompleteProgress]);
 
-  // Reset when new response comes in
+  // Reset and auto-play when new response comes in
   useEffect(() => {
     setCurrentStepIndex(0);
-    setIsPlaying(false);
+    setIsPlaying(true);
     setHasStartedProgress(false);
   }, [response]);
+
 
   // Control handlers
   const handlePlayPause = () => {
