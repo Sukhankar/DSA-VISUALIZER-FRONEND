@@ -9,6 +9,7 @@ interface ArrayInputProps {
   isLoading?: boolean;
   defaultInput?: string;
   defaultTarget?: number;
+  label?: string;
 }
 
 export const ArrayInput: React.FC<ArrayInputProps> = ({
@@ -18,6 +19,7 @@ export const ArrayInput: React.FC<ArrayInputProps> = ({
   isLoading = false,
   defaultInput = '5, 1, 4, 2, 8',
   defaultTarget = 4,
+  label = 'Input Elements (comma-separated, max 50)',
 }) => {
   const [arrayStr, setArrayStr] = useState<string>(defaultInput);
   const [targetStr, setTargetStr] = useState<string>(
@@ -111,7 +113,7 @@ export const ArrayInput: React.FC<ArrayInputProps> = ({
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Array Elements (comma-separated, max 50)
+            {label}
           </label>
           <input
             type="text"

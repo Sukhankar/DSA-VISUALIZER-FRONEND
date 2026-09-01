@@ -16,6 +16,7 @@ import { ExampleCard } from '../components/algorithm/ExampleCard';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { getErrorMessage } from '../utils/errorUtils';
+import { getStarterTemplate } from '../utils/problemTemplates';
 import {
   ArrowLeft,
   Play,
@@ -36,30 +37,6 @@ import {
   Clock,
   Cpu,
 } from 'lucide-react';
-
-const STARTER_TEMPLATES: Record<string, string> = {
-  JAVA: `public class Solution {
-    public int[] solve(int[] nums, int target) {
-        // Write your solution here
-        return new int[]{0, 1};
-    }
-}`,
-  PYTHON: `class Solution:
-    def solve(self, nums: list[int], target: int) -> list[int]:
-        # Write your solution here
-        return [0, 1]`,
-  JAVASCRIPT: `function solve(nums, target) {
-  // Write your solution here
-  return [0, 1];
-}`,
-  CPP: `class Solution {
-public:
-    vector<int> solve(vector<int>& nums, int target) {
-        // Write your solution here
-        return {0, 1};
-    }
-};`,
-};
 
 export const ProblemDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -93,7 +70,7 @@ export const ProblemDetailPage: React.FC = () => {
       .then((data) => {
         setProblem(data);
         const savedCode = localStorage.getItem(`problem_draft_${slug}_${selectedLanguage}`);
-        setCode(savedCode || STARTER_TEMPLATES[selectedLanguage] || '// Write code here');
+        setCode(savedCode || getStarterTemplate(slug, selectedLanguage));
       })
       .catch((err) => {
         setError(getErrorMessage(err));
@@ -128,7 +105,7 @@ export const ProblemDetailPage: React.FC = () => {
     setSelectedLanguage(lang);
     if (slug) {
       const savedCode = localStorage.getItem(`problem_draft_${slug}_${lang}`);
-      setCode(savedCode || STARTER_TEMPLATES[lang] || '// Write code here');
+      setCode(savedCode || getStarterTemplate(slug, lang));
     }
   };
 
@@ -177,7 +154,7 @@ export const ProblemDetailPage: React.FC = () => {
   };
 
   const handleResetCode = () => {
-    const template = STARTER_TEMPLATES[selectedLanguage] || '';
+    const template = slug ? getStarterTemplate(slug, selectedLanguage) : '';
     setCode(template);
     if (slug) {
       localStorage.setItem(`problem_draft_${slug}_${selectedLanguage}`, template);
@@ -185,6 +162,7 @@ export const ProblemDetailPage: React.FC = () => {
     setRunResult(null);
     setLastSubmission(null);
   };
+
 
   const getVerdictBadge = (verdict: SubmissionVerdict) => {
     switch (verdict) {
@@ -536,28 +514,45 @@ export const ProblemDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {runResult.testResults.map((tc) => (
-                  <div
-                    key={tc.testCaseNumber}
-                    className={`p-2.5 rounded-lg border text-xs font-mono ${
-                      tc.passed
-                        ? 'bg-emerald-950/20 border-emerald-500/20 text-emerald-300'
-                        : 'bg-rose-950/20 border-rose-500/20 text-rose-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1 font-bold">
-                      <span>Test Case {tc.testCaseNumber}</span>
-                      <span>{tc.passed ? '✓ Passed' : '✗ Failed'}</span>
-                    </div>
-                    <div>Input: {tc.inputData}</div>
-                    <div>Expected: {tc.expectedOutput}</div>
-                    <div>Output: {tc.actualOutput}</div>
+              {/* CLI Error Console Box for COMPILATION_ERROR or RUNTIME_ERROR */}
+              {(runResult.verdict === 'COMPILATION_ERROR' || runResult.verdict === 'RUNTIME_ERROR') && (
+                <div className="p-4 bg-rose-950/40 border border-rose-500/30 rounded-xl font-mono text-xs text-rose-200 space-y-2 overflow-x-auto">
+                  <div className="flex items-center gap-2 font-bold text-rose-400 border-b border-rose-500/20 pb-2">
+                    <Terminal className="w-4 h-4" />
+                    <span>{runResult.verdict === 'COMPILATION_ERROR' ? 'CLI Compiler Diagnostic Output' : 'CLI Runtime Execution Error'}</span>
                   </div>
-                ))}
-              </div>
+                  <pre className="whitespace-pre-wrap leading-relaxed text-[12px] font-mono text-rose-300">
+                    {runResult.testResults[0]?.actualOutput || runResult.testResults[0]?.errorMessage || 'Compilation or Runtime error occurred.'}
+                  </pre>
+                </div>
+              )}
+
+              {runResult.verdict !== 'COMPILATION_ERROR' && runResult.verdict !== 'RUNTIME_ERROR' && (
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {runResult.testResults.map((tc) => (
+                    <div
+                      key={tc.testCaseNumber}
+                      className={`p-2.5 rounded-lg border text-xs font-mono ${
+                        tc.passed
+                          ? 'bg-emerald-950/20 border-emerald-500/20 text-emerald-300'
+                          : 'bg-rose-950/20 border-rose-500/20 text-rose-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1 font-bold">
+                        <span>Test Case {tc.testCaseNumber}</span>
+                        <span>{tc.passed ? '✓ Passed' : '✗ Failed'}</span>
+                      </div>
+                      <div>Input: {tc.inputData}</div>
+                      <div>Expected: {tc.expectedOutput}</div>
+                      <div className={!tc.passed ? 'text-rose-400 font-bold' : ''}>Output: {tc.actualOutput}</div>
+                      {tc.errorMessage && <div className="text-rose-400/90 text-[11px] italic mt-1">{tc.errorMessage}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
           )}
+
 
           {/* Formal Submission Verdict Result */}
           {lastSubmission && (

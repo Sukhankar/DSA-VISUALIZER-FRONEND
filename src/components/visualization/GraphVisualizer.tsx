@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { GraphEdgeDto, ActionType } from '../../types';
+import { GraphEdgeDto, ActionType, VisualizationStep } from '../../types';
 
 interface GraphVisualizerProps {
   nodes?: string[];
@@ -8,22 +8,51 @@ interface GraphVisualizerProps {
   visitedNodes?: string[];
   frontier?: string[];
   action?: ActionType;
+  currentStep?: VisualizationStep;
 }
 
 export const GraphVisualizer: React.FC<GraphVisualizerProps> = ({
-  nodes = [],
-  edges = [],
-  currentNode,
-  visitedNodes = [],
-  frontier = [],
-  action,
+  nodes: propNodes,
+  edges: propEdges,
+  currentNode: propCurrentNode,
+  visitedNodes: propVisitedNodes,
+  frontier: propFrontier,
+  action: propAction,
+  currentStep,
 }) => {
+  // Extract values from currentStep if provided
+  const currentNode = propCurrentNode || currentStep?.currentNode || 'A';
+  const visitedNodes = propVisitedNodes || currentStep?.visitedNodes || [];
+  const frontier = propFrontier || currentStep?.frontier || [];
+  const action = propAction || currentStep?.action;
+
+  // Build default nodes & edges if not provided
+  const nodes = useMemo(() => {
+    if (propNodes && propNodes.length > 0) return propNodes;
+    if (visitedNodes.length > 0 || frontier.length > 0) {
+      const set = new Set([...visitedNodes, ...frontier, currentNode].filter(Boolean) as string[]);
+      if (set.size > 0) return Array.from(set);
+    }
+    return ['A', 'B', 'C', 'D', 'E', 'F'];
+  }, [propNodes, visitedNodes, frontier, currentNode]);
+
+  const edges = useMemo(() => {
+    if (propEdges && propEdges.length > 0) return propEdges;
+    return [
+      { from: 'A', to: 'B' },
+      { from: 'A', to: 'C' },
+      { from: 'B', to: 'D' },
+      { from: 'B', to: 'E' },
+      { from: 'C', to: 'F' },
+    ];
+  }, [propEdges]);
+
   // SVG Canvas Configuration
   const width = 600;
-  const height = 360;
+  const height = 340;
   const cx = width / 2;
   const cy = height / 2;
-  const radius = 130;
+  const radius = 120;
   const nodeRadius = 22;
 
   // Calculate deterministic circular coordinates for nodes
@@ -42,14 +71,6 @@ export const GraphVisualizer: React.FC<GraphVisualizerProps> = ({
 
     return map;
   }, [nodes, cx, cy, radius]);
-
-  if (!nodes || nodes.length === 0) {
-    return (
-      <div className="h-72 flex items-center justify-center text-xs text-slate-500 font-mono">
-        No graph node data available.
-      </div>
-    );
-  }
 
   const getNodeStyle = (node: string) => {
     const isCurrent = currentNode === node;
@@ -102,27 +123,31 @@ export const GraphVisualizer: React.FC<GraphVisualizerProps> = ({
   };
 
   return (
-    <div className="w-full p-4 bg-slate-950/80 border border-slate-800 rounded-2xl flex flex-col items-center justify-center select-none overflow-hidden">
+    <div className="w-full p-4 bg-slate-950/80 border border-slate-800 rounded-2xl flex flex-col items-center justify-center select-none overflow-hidden space-y-3">
       {/* Legend Header */}
-      <div className="w-full flex items-center justify-center gap-4 text-[11px] text-slate-400 mb-2 border-b border-slate-800/60 pb-2">
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-indigo-600 border border-indigo-400" />
-          <span>Current Node</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-amber-600 border border-amber-400" />
-          <span>Frontier</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-emerald-600 border border-emerald-400" />
-          <span>Visited</span>
+      <div className="w-full flex items-center justify-between px-3 text-[11px] font-mono text-slate-400 border-b border-slate-800/60 pb-2">
+        <div className="font-bold text-slate-200">Graph Traversal (BFS / DFS Metaphor)</div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-indigo-600 border border-indigo-400" />
+            <span>Current</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-amber-600 border border-amber-400" />
+            <span>Frontier</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-emerald-600 border border-emerald-400" />
+            <span>Visited</span>
+          </div>
         </div>
       </div>
 
       {/* SVG Canvas */}
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="w-full max-h-[360px] overflow-visible"
+        className="w-full max-h-[340px] overflow-visible"
       >
         <defs>
           <marker

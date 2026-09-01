@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Algorithm, AlgorithmDetailRichResponse } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Algorithm, AlgorithmDetailRichResponse, LearningLevel, AlgorithmLearningContent } from '../../types';
+import { getLearningContent } from '../../api/algorithmService';
+
 import {
   BookOpen,
   Lightbulb,
@@ -14,12 +16,19 @@ import {
   Check,
   Zap,
   XCircle,
+  ExternalLink,
+  Target,
+  GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 
 interface AlgorithmOverviewCardProps {
   algorithm: Algorithm;
   richDetails?: AlgorithmDetailRichResponse | null;
+  level?: LearningLevel;
+  onLevelChange?: (level: LearningLevel) => void;
 }
+
 
 interface AlgorithmicExample {
   title: string;
@@ -349,28 +358,60 @@ int solveKnapsack(const std::vector<int>& weights, const std::vector<int>& value
 export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
   algorithm,
   richDetails,
+  level = 'BEGINNER',
+  onLevelChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<'theory' | 'why' | 'examples' | 'code'>('theory');
+  const [activeTab, setActiveTab] = useState<'theory' | 'why' | 'examples' | 'code' | 'advanced' | 'practice'>('theory');
   const [selectedCodeLang, setSelectedCodeLang] = useState<'java' | 'python' | 'cpp' | 'javascript'>('java');
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const [learningContent, setLearningContent] = useState<AlgorithmLearningContent | null>(null);
+  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoadingContent(true);
+    getLearningContent(algorithm.slug, level)
+      .then((data) => {
+        if (isMounted) {
+          setLearningContent(data);
+          setIsLoadingContent(false);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch deep learning content, using fallback:', err);
+        if (isMounted) setIsLoadingContent(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [algorithm.slug, level]);
 
   const slugKey = algorithm.slug.toLowerCase();
   const dbInfo = COMPREHENSIVE_THEORY_DB[slugKey];
 
-  // Seamless prioritization of Backend API richDetails -> Local Knowledge DB -> Fallbacks
+  // Seamless prioritization of Backend API learningContent -> richDetails -> Local Knowledge DB -> Fallbacks
   const whatIsIt =
+    learningContent?.introduction ||
     richDetails?.overview ||
     dbInfo?.whatIsIt ||
     richDetails?.description ||
     algorithm.description ||
     `${algorithm.name} is an essential algorithm in computer science.`;
 
-  const howItWorks = dbInfo?.howItWorks || [
-    'Initialize required data structures and state variables.',
-    'Iterate through elements or state space step-by-step.',
-    'Apply core algorithmic comparison or transition logic.',
-    'Return processed optimal result.',
-  ];
+  const intuition =
+    learningContent?.intuition ||
+    dbInfo?.whatIsIt ||
+    'Understand the fundamental core concept behind this algorithm before diving into steps.';
+
+  const howItWorks =
+    learningContent?.howItWorks ||
+    dbInfo?.howItWorks || [
+      'Initialize required data structures and state variables.',
+      'Iterate through elements or state space step-by-step.',
+      'Apply core algorithmic comparison or transition logic.',
+      'Return processed optimal result.',
+    ];
+
 
   const whyUsed =
     richDetails?.whenToUse ||
@@ -493,8 +534,33 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
           >
             Code Snippets
           </button>
+
+          {learningContent?.advancedTheory && (
+            <button
+              onClick={() => setActiveTab('advanced')}
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer ${
+                activeTab === 'advanced'
+                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-950'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Advanced Proofs
+            </button>
+          )}
+
+          <button
+            onClick={() => setActiveTab('practice')}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer ${
+              activeTab === 'practice'
+                ? 'bg-amber-600 text-white shadow-md shadow-amber-950'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Practice
+          </button>
         </div>
       </div>
+
 
       {/* Tab 1: Detailed Theory & Step-by-Step Execution */}
       {activeTab === 'theory' && (
@@ -663,6 +729,91 @@ export const AlgorithmOverviewCard: React.FC<AlgorithmOverviewCardProps> = ({
           </div>
         </div>
       )}
+
+      {/* Tab 5: Advanced Theory & Correctness Proofs */}
+      {activeTab === 'advanced' && learningContent?.advancedTheory && (
+        <div className="space-y-3.5 max-h-[360px] overflow-y-auto custom-scrollbar pr-1">
+          {learningContent.advancedTheory.mathematicalFoundation && (
+            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 font-mono text-[11px]">
+              <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">
+                Mathematical Foundation
+              </span>
+              <p className="text-slate-200 leading-relaxed font-sans">{learningContent.advancedTheory.mathematicalFoundation}</p>
+            </div>
+          )}
+
+          {learningContent.advancedTheory.invariant && (
+            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 font-mono text-[11px]">
+              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+                Loop Invariant P(k)
+              </span>
+              <p className="text-slate-200 leading-relaxed font-sans">{learningContent.advancedTheory.invariant}</p>
+            </div>
+          )}
+
+          {learningContent.advancedTheory.correctnessProof && (
+            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 font-mono text-[11px]">
+              <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">
+                Inductive Correctness Proof
+              </span>
+              <p className="text-slate-200 leading-relaxed font-sans whitespace-pre-line">{learningContent.advancedTheory.correctnessProof}</p>
+            </div>
+          )}
+
+          {learningContent.advancedTheory.recurrence && (
+            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 font-mono text-[11px]">
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                Recurrence Relation & Master Theorem
+              </span>
+              <p className="text-slate-200 leading-relaxed">{learningContent.advancedTheory.recurrence}</p>
+              <p className="text-emerald-400 font-bold">{learningContent.advancedTheory.recurrenceSolution}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab 6: Curated Practice Recommendations */}
+      {activeTab === 'practice' && (
+        <div className="space-y-3.5 max-h-[360px] overflow-y-auto custom-scrollbar pr-1">
+          {(learningContent?.practiceRecommendations || []).length > 0 ? (
+            learningContent!.practiceRecommendations!.map((pr, pIdx) => (
+              <div key={`pr-${pIdx}`} className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-slate-100 text-xs">{pr.problemTitle}</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase ${
+                      pr.difficulty === 'EASY' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/30' :
+                      pr.difficulty === 'MEDIUM' ? 'bg-amber-950 text-amber-300 border border-amber-500/30' :
+                      'bg-rose-950 text-rose-300 border border-rose-500/30'
+                    }`}>
+                      {pr.difficulty}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-mono block">Platform: {pr.platform || 'CodeLoom Arena'}</span>
+                </div>
+                <a
+                  href={`/problems/${pr.problemSlug}`}
+                  className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] uppercase flex items-center gap-1 cursor-pointer transition-colors shadow-md shadow-indigo-950 shrink-0"
+                >
+                  Solve <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            ))
+          ) : (
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-400 text-center space-y-2">
+              <Target className="w-6 h-6 text-indigo-400 mx-auto" />
+              <p className="text-xs font-medium">Solve related problems in the CodeLoom Practice Arena to master this algorithm.</p>
+              <a
+                href={`/problems?algorithm=${algorithm.slug}`}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold uppercase cursor-pointer"
+              >
+                Go to Practice Arena <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+
 
       {/* Complexities Footer Bar */}
       <div className="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800/80">

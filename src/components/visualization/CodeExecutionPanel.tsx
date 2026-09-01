@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import { ActionType, VisualizationStep, AlgorithmImplementation } from '../../types';
 import { Code2, Play, Cpu, Check, Layers, Variable } from 'lucide-react';
 
+import { LearningLevel } from '../../types';
+
 export interface CodeExecutionPanelProps {
   slug: string;
   currentStepData?: VisualizationStep;
   implementations?: AlgorithmImplementation[];
+  level?: LearningLevel;
 }
+
 
 type SupportedLanguage = 'pseudocode' | 'java' | 'python' | 'cpp' | 'javascript';
 
@@ -410,8 +414,45 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
   slug,
   currentStepData,
   implementations,
+  level = 'BEGINNER',
 }) => {
   const [selectedLang, setSelectedLang] = useState<SupportedLanguage>('java');
+
+  // Helper for Why This Line explanations
+  const getLineExplanation = (action?: ActionType, lvl?: LearningLevel): string => {
+    if (lvl === 'BEGINNER') {
+      switch (action) {
+        case 'INITIAL': return 'Line initializes tracking variables so we know where to start looking.';
+        case 'COMPARE': return 'Line compares two values to see if they need to be reordered or selected.';
+        case 'SWAP': return 'Line swaps out-of-order elements so larger items move right.';
+        case 'FOUND': return 'Line returns the matching target index since we found our item!';
+        case 'COMPLETE': return 'Line finishes execution and returns the final optimal result.';
+        default: return 'Line advances algorithm execution state.';
+      }
+    } else if (lvl === 'ADVANCED') {
+      switch (action) {
+        case 'INITIAL': return 'Allocates stack memory and sets loop invariants P(0).';
+        case 'COMPARE': return 'Executes relational comparison opcode; branch prediction target evaluated.';
+        case 'SWAP': return 'Performs in-place element permutation (XOR/temp) maintaining range invariant.';
+        case 'FOUND': return 'Evaluates search space termination predicate and returns index offset.';
+        case 'COMPLETE': return 'Loop post-condition holds; satisfies worst-case asymptotic upper bounds.';
+        default: return 'Performs atomic state transition operation.';
+      }
+    } else {
+      // INTERMEDIATE
+      switch (action) {
+        case 'INITIAL': return 'Sets up array length and loop pointers for boundary tracking.';
+        case 'COMPARE': return 'Evaluates conditional logic A[j] vs A[j+1] against sorting criteria.';
+        case 'SWAP': return 'Mutates array state in-place to resolve inversion pairs.';
+        case 'FOUND': return 'Target value located in O(log N) or O(N) operations.';
+        case 'COMPLETE': return 'Algorithm completes processing with zero remaining inversions.';
+        default: return 'Executes current step logic.';
+      }
+    }
+  };
+
+  const lineExplanation = getLineExplanation(currentStepData?.action, level);
+
 
   const javaImpl = implementations?.find((i) => i.language.toUpperCase() === 'JAVA')?.code;
   const pythonImpl = implementations?.find((i) => i.language.toUpperCase() === 'PYTHON')?.code;
@@ -556,7 +597,17 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
         })}
       </div>
 
+
+      {/* WHY THIS LINE? Pedagogical Callout */}
+      <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-[11px] space-y-1 font-sans">
+        <span className="font-extrabold text-emerald-400 uppercase text-[10px] tracking-wider block">
+          Why Line #{activeLineNumber}? ({level} Level)
+        </span>
+        <p className="text-slate-300 leading-relaxed font-medium">{lineExplanation}</p>
+      </div>
+
       {/* CURRENT STATE Runtime Variable Inspector (Requirement #9 & #10) */}
+
       <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 font-mono text-xs">
         <div className="flex items-center justify-between border-b border-slate-900 pb-1.5 font-sans">
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-cyan-400 flex items-center gap-1">

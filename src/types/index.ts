@@ -3,6 +3,50 @@ export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD' | 'EXTREME_HARD';
 
 export type UserRole = 'ROLE_USER' | 'ROLE_ADMIN';
 export type ProgressStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+export type LearningLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+
+export interface AdvancedTheory {
+  mathematicalFoundation?: string;
+  invariant?: string;
+  correctnessProof?: string;
+  recurrence?: string;
+  recurrenceSolution?: string;
+  optimization?: string;
+  memoryAnalysis?: string;
+  advancedTradeoffs?: string;
+  competitiveProgrammingNotes?: string;
+}
+
+export interface PracticeRecommendation {
+  problemTitle: string;
+  problemSlug: string;
+  difficulty: string;
+  platform?: string;
+}
+
+export interface AlgorithmLearningContent {
+  algorithmId: string;
+  algorithmName: string;
+  algorithmSlug: string;
+  level: LearningLevel;
+  introduction?: string;
+  problemStatement?: string;
+  intuition?: string;
+  whyItWorks?: string;
+  howItWorks?: string[];
+  pseudocode?: string;
+  complexitySummary?: string;
+  whenToUse?: string;
+  whenNotToUse?: string;
+  advantages?: string;
+  limitations?: string;
+  commonMistakes?: string;
+  interviewTips?: string;
+  implementationNotes?: string;
+  advancedTheory?: AdvancedTheory | null;
+  practiceRecommendations?: PracticeRecommendation[];
+}
+
 
 export type SubmissionStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
 export type SubmissionVerdict =
@@ -13,7 +57,28 @@ export type SubmissionVerdict =
   | 'COMPILATION_ERROR'
   | 'INTERNAL_ERROR';
 
-export type VisualizationType = 'ARRAY' | 'TREE' | 'GRAPH' | 'LINKED_LIST' | 'GRID';
+export type VisualizationType =
+  | 'ARRAY'
+  | 'ARRAY_BAR'
+  | 'ARRAY_INDEXED'
+  | 'TWO_POINTER'
+  | 'LINKED_LIST'
+  | 'STACK'
+  | 'QUEUE'
+  | 'TREE'
+  | 'BST'
+  | 'AVL_TREE'
+  | 'HEAP'
+  | 'GRAPH'
+  | 'WEIGHTED_GRAPH'
+  | 'DP_TABLE'
+  | 'RECURSION_TREE'
+  | 'BACKTRACKING_GRID'
+  | 'HASH_TABLE'
+  | 'MATRIX'
+  | 'INTERVAL'
+  | 'GRID'
+  | 'CUSTOM';
 
 export type ActionType =
   | 'INITIAL'
@@ -337,6 +402,22 @@ export interface VisualizationRequest {
   graph?: GraphVisualizationRequest;
 }
 
+export interface PointerState {
+  name: string;
+  index?: number;
+  nodeId?: string;
+  direction?: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+  color?: string;
+}
+
+export interface CallStackFrame {
+  functionName: string;
+  args?: string;
+  depth?: number;
+  status?: 'CALL' | 'EXECUTE' | 'RETURN';
+  returnValue?: string;
+}
+
 export interface VisualizationStep {
   step: number;
   action: ActionType;
@@ -345,6 +426,18 @@ export interface VisualizationStep {
   currentNode?: string;
   visitedNodes?: string[];
   frontier?: string[];
+  pointers?: PointerState[];
+  matrix?: (number | string)[][];
+  stackItems?: (number | string)[];
+  queueItems?: (number | string)[];
+  callStack?: CallStackFrame[];
+  balanceFactors?: Record<number, number>;
+  nodeHeights?: Record<number, number>;
+  rotationInfo?: {
+    type?: 'LL' | 'RR' | 'LR' | 'RL' | string;
+    pivotValue?: number;
+    promotedValue?: number;
+  };
   message: string;
   codeLineMap?: Record<string, number>;
   beginnerExplanation?: string;

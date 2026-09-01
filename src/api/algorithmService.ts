@@ -42,6 +42,14 @@ export const algorithmService = {
     return response.data;
   },
 
+  async getLearningContent(slug: string, level?: string): Promise<import('../types').AlgorithmLearningContent> {
+    const response = await apiClient.get<import('../types').AlgorithmLearningContent>(
+      `${ENDPOINTS.ALGORITHM_BY_SLUG(slug)}/learning`,
+      { params: level ? { level } : {} }
+    );
+    return response.data;
+  },
+
   async getMasteryStatus(slug: string): Promise<{ algorithmSlug: string; mastered: boolean; masteredAt?: string; xpEarned: number; newlyMastered: boolean }> {
     const response = await apiClient.get(`${ENDPOINTS.ALGORITHM_BY_SLUG(slug)}/mastery`);
     return response.data;
@@ -57,6 +65,8 @@ export const getAlgorithms = algorithmService.getAlgorithms;
 export const getAllCategories = algorithmService.getAllCategories;
 export const getAlgorithmBySlug = algorithmService.getAlgorithmBySlug;
 export const getRichAlgorithmDetails = algorithmService.getRichAlgorithmDetails;
+export const getLearningContent = algorithmService.getLearningContent;
 export const getMasteryStatus = algorithmService.getMasteryStatus;
 export const toggleMastery = algorithmService.toggleMastery;
+
 

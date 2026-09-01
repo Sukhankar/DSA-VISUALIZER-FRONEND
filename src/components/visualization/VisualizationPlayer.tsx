@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { VisualizationResponse, VisualizationStep, AlgorithmImplementation } from '../../types';
-import { ArrayVisualizer } from './ArrayVisualizer';
-import { GraphVisualizer } from './GraphVisualizer';
-import { TreeVisualizationPanel } from './TreeVisualizationPanel';
-import { LinkedListVisualizationPanel } from './LinkedListVisualizationPanel';
+import { VisualizationRenderer } from './VisualizationRenderer';
 import { PlaybackControls } from './PlaybackControls';
 import { StepTimeline } from './StepTimeline';
 import { CodeExecutionPanel } from './CodeExecutionPanel';
@@ -12,11 +9,14 @@ import { LearningModeToggle, LearningMode } from '../learning/LearningModeToggle
 import { userActivityService } from '../../api/userActivityService';
 import { EmptyState } from '../ui/EmptyState';
 
+import { LearningLevel } from '../../types';
+
 interface VisualizationPlayerProps {
   response: VisualizationResponse;
   slug: string;
   isAuthenticated?: boolean;
   implementations?: AlgorithmImplementation[];
+  level?: LearningLevel;
 }
 
 export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
@@ -24,7 +24,9 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
   slug,
   isAuthenticated = false,
   implementations,
+  level = 'BEGINNER',
 }) => {
+
   const { steps, visualizationType } = response;
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -197,37 +199,11 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
         </div>
 
         {/* Visual Canvas Renderer Router */}
-        {isTreeAlgo ? (
-          <TreeVisualizationPanel step={currentStepData} />
-        ) : isLinkedListAlgo ? (
-          <LinkedListVisualizationPanel step={currentStepData} />
-        ) : visualizationType === 'GRAPH' ? (
-          <GraphVisualizer
-            nodes={
-              response.steps[0]?.visitedNodes
-                ? Array.from(
-                    new Set(
-                      response.steps.flatMap((s) =>
-                        [...(s.visitedNodes || []), ...(s.frontier || []), s.currentNode].filter(
-                          Boolean
-                        ) as string[]
-                      )
-                    )
-                  )
-                : undefined
-            }
-            currentNode={currentStepData?.currentNode}
-            visitedNodes={currentStepData?.visitedNodes}
-            frontier={currentStepData?.frontier}
-            action={currentStepData?.action}
-          />
-        ) : (
-          <ArrayVisualizer
-            array={currentStepData?.array || []}
-            indices={currentStepData?.indices || []}
-            action={currentStepData?.action}
-          />
-        )}
+        <VisualizationRenderer
+          algorithmSlug={slug}
+          backendVisualizationType={visualizationType}
+          currentStep={currentStepData}
+        />
 
         {/* Step Timeline & Progress Bar */}
         <StepTimeline
@@ -260,11 +236,13 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
           slug={slug}
           currentStepData={currentStepData}
           implementations={implementations}
+          level={level}
         />
 
         {/* Synchronized Step Explanation Card */}
-        <StepExplanationCard step={currentStepData} mode={learningMode} />
+        <StepExplanationCard step={currentStepData} mode={level as any} />
       </div>
+
     </div>
   );
 
