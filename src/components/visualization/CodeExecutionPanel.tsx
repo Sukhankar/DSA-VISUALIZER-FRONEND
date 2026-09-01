@@ -388,7 +388,10 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
     langDef = codeSet?.languages[selectedLang] || defaultDef;
   }
 
-  const activeLineNumber = langDef.getActionLine(currentStepData?.action);
+  const activeLineNumber =
+    currentStepData?.codeLineMap?.[selectedLang] ??
+    langDef.getActionLine(currentStepData?.action);
+
 
 
   return (

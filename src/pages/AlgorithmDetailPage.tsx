@@ -28,6 +28,9 @@ import {
   FileCode2,
   ShieldAlert,
 } from 'lucide-react';
+import { MasteryButton } from '../components/algorithm/MasteryButton';
+import { AlgorithmExamplesViewer } from '../components/algorithm/AlgorithmExamplesViewer';
+
 
 export const AlgorithmDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -36,6 +39,7 @@ export const AlgorithmDetailPage: React.FC = () => {
 
   const [algorithm, setAlgorithm] = useState<AlgorithmDetailRichResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isMastered, setIsMastered] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,6 +69,13 @@ export const AlgorithmDetailPage: React.FC = () => {
           if (isMounted) {
             setIsFavorite(favs.some((f) => f.slug === slug));
           }
+        })
+        .catch(() => {});
+
+      algorithmService
+        .getMasteryStatus(slug)
+        .then((res) => {
+          if (isMounted) setIsMastered(res.mastered);
         })
         .catch(() => {});
     }
@@ -131,6 +142,7 @@ export const AlgorithmDetailPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <MasteryButton slug={algorithm.slug} initialMastered={isMastered} />
             <FavoriteButton
               algorithmSlug={algorithm.slug}
               initialFavorite={isFavorite}
@@ -141,13 +153,14 @@ export const AlgorithmDetailPage: React.FC = () => {
                 Practice This Algorithm
               </Button>
             </Link>
-            <Link to={`/visualize/${algorithm.slug}`}>
+            <Link to={`/visualization/${algorithm.slug}`}>
               <Button variant="primary" size="md" leftIcon={<Play className="w-4 h-4 fill-white" />}>
                 Launch Visualizer
               </Button>
             </Link>
           </div>
         </div>
+
 
 
         <div>
@@ -251,19 +264,9 @@ export const AlgorithmDetailPage: React.FC = () => {
             </div>
           )}
 
-          {/* Examples Section */}
+          {/* Interactive Examples Viewer */}
           {algorithm.examples && algorithm.examples.length > 0 && (
-            <Card className="space-y-4 bg-slate-900/80 border-slate-800">
-              <div className="flex items-center gap-2 font-bold text-base text-slate-100">
-                <ListOrdered className="w-5 h-5 text-indigo-400" />
-                <h2>Input / Output Examples</h2>
-              </div>
-              <div className="space-y-4">
-                {algorithm.examples.map((example) => (
-                  <ExampleCard key={example.exampleNumber} example={example} />
-                ))}
-              </div>
-            </Card>
+            <AlgorithmExamplesViewer slug={algorithm.slug} examples={algorithm.examples} />
           )}
 
           {/* Constraints */}

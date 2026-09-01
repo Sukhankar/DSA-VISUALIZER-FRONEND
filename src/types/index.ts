@@ -346,6 +346,11 @@ export interface VisualizationStep {
   visitedNodes?: string[];
   frontier?: string[];
   message: string;
+  codeLineMap?: Record<string, number>;
+  beginnerExplanation?: string;
+  advancedExplanation?: string;
+  whyMessage?: string;
+  complexityImpact?: string;
 }
 
 export interface VisualizationResponse {
@@ -353,6 +358,15 @@ export interface VisualizationResponse {
   visualizationType: VisualizationType;
   steps: VisualizationStep[];
 }
+
+export interface AlgorithmMasteryDto {
+  algorithmSlug: string;
+  mastered: boolean;
+  masteredAt?: string;
+  xpEarned: number;
+  newlyMastered: boolean;
+}
+
 
 // User Favorites & Progress Models
 export interface FavoriteAlgorithmResponse {

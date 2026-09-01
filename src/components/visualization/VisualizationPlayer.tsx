@@ -7,6 +7,8 @@ import { LinkedListVisualizationPanel } from './LinkedListVisualizationPanel';
 import { PlaybackControls } from './PlaybackControls';
 import { StepTimeline } from './StepTimeline';
 import { CodeExecutionPanel } from './CodeExecutionPanel';
+import { StepExplanationCard } from './StepExplanationCard';
+import { LearningModeToggle, LearningMode } from '../learning/LearningModeToggle';
 import { userActivityService } from '../../api/userActivityService';
 import { EmptyState } from '../ui/EmptyState';
 
@@ -23,12 +25,21 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
   isAuthenticated = false,
   implementations,
 }) => {
-
   const { steps, visualizationType } = response;
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(1);
   const [hasStartedProgress, setHasStartedProgress] = useState<boolean>(false);
+
+  const [learningMode, setLearningMode] = useState<LearningMode>(() => {
+    const saved = localStorage.getItem('codeloom_learning_mode');
+    return (saved as LearningMode) || 'STANDARD';
+  });
+
+  const handleModeChange = (mode: LearningMode) => {
+    setLearningMode(mode);
+    localStorage.setItem('codeloom_learning_mode', mode);
+  };
 
   const totalSteps = steps ? steps.length : 0;
   const currentStepData: VisualizationStep | undefined = steps?.[currentStepIndex];
@@ -170,6 +181,11 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Learning Mode Selector Header */}
+      <div className="flex items-center justify-between">
+        <LearningModeToggle currentMode={learningMode} onModeChange={handleModeChange} compact />
+      </div>
+
       {/* Visual Canvas Renderer Router */}
       {isTreeAlgo ? (
         <TreeVisualizationPanel step={currentStepData} />
@@ -214,9 +230,11 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
         onSpeedChange={setSpeed}
       />
 
+      {/* Synchronized Step Explanation Card */}
+      <StepExplanationCard step={currentStepData} mode={learningMode} />
+
       {/* Interactive Step-by-Step Code Execution Panel */}
       <CodeExecutionPanel slug={slug} currentStepData={currentStepData} implementations={implementations} />
     </div>
   );
 };
-
