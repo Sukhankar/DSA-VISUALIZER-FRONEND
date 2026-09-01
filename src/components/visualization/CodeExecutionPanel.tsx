@@ -394,13 +394,23 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
 
 
 
+  const codeContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!codeContainerRef.current) return;
+    const activeEl = codeContainerRef.current.querySelector('.code-line-active');
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [activeLineNumber]);
+
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4 font-mono select-none">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 font-mono select-none">
       {/* Panel Header with Language Selectors */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-200 uppercase tracking-wider">
           <Code2 className="w-4 h-4 text-emerald-400" />
-          <span>Synchronized Code Execution Line</span>
+          <span>Code Execution Line</span>
         </div>
 
         {/* Language Tabs */}
@@ -409,7 +419,7 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
             <button
               key={lang}
               onClick={() => setSelectedLang(lang)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase transition-colors cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer ${
                 selectedLang === lang
                   ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-950'
                   : 'text-slate-400 hover:text-slate-200'
@@ -421,8 +431,11 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
         </div>
       </div>
 
-      {/* Code Editor Body with Line-by-Line Highlight */}
-      <div className="bg-slate-950 rounded-xl p-4 border border-slate-900 overflow-x-auto text-xs space-y-1.5 leading-relaxed">
+      {/* Code Editor Body with Line-by-Line Highlight and max height scrolling */}
+      <div
+        ref={codeContainerRef}
+        className="bg-slate-950 rounded-xl p-3 border border-slate-900 overflow-y-auto max-h-[300px] text-xs space-y-1 leading-relaxed custom-scrollbar"
+      >
         {langDef.lines.map((line, idx) => {
           const lineNumber = idx + 1;
           const isActive = lineNumber === activeLineNumber;
@@ -430,22 +443,22 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
           return (
             <div
               key={`code-line-${lineNumber}`}
-              className={`flex items-center gap-4 px-3 py-1 rounded-lg transition-all duration-300 ${
+              className={`flex items-center gap-3 px-2.5 py-1 rounded-lg transition-all duration-300 ${
                 isActive
-                  ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 font-bold shadow-lg shadow-emerald-500/10 translate-x-1'
+                  ? 'code-line-active bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 font-bold shadow-lg shadow-emerald-500/10 translate-x-0.5'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <span className={`w-6 text-right shrink-0 text-[11px] font-bold ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
+              <span className={`w-5 text-right shrink-0 text-[10px] font-bold ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
                 {lineNumber}
               </span>
 
               <div className="flex-1 flex items-center justify-between overflow-x-auto">
-                <span className="whitespace-pre font-mono text-slate-200">{line}</span>
+                <span className="whitespace-pre font-mono text-[11px] text-slate-200">{line}</span>
 
                 {isActive && (
-                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
-                    <Play className="w-2.5 h-2.5 fill-emerald-400" /> Active Line
+                  <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30 shrink-0 ml-2">
+                    <Play className="w-2 h-2 fill-emerald-400" /> Active
                   </span>
                 )}
               </div>
@@ -453,6 +466,7 @@ export const CodeExecutionPanel: React.FC<CodeExecutionPanelProps> = ({
           );
         })}
       </div>
+
 
       {/* Variable & Action State Inspector */}
       {currentStepData && (

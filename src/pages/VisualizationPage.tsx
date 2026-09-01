@@ -250,10 +250,10 @@ export const VisualizationPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main 2-Column Split Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column (4 cols): Algorithm Overview & Input Config */}
-        <div className="lg:col-span-4 space-y-6">
+      {/* Main 3-Column Visualizer Grid Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-6 items-start">
+        {/* Column 1: Algorithm Overview & Input Config (3 cols on xl) */}
+        <div className="lg:col-span-4 xl:col-span-3 space-y-6">
           {/* 1. Algorithm Overview & Complexities Card */}
           <Card className="bg-slate-900/90 border-slate-800 p-5 space-y-4">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-3">
@@ -330,8 +330,8 @@ export const VisualizationPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* Right Column (8 cols): Visualization Player Canvas */}
-        <div className="lg:col-span-8 space-y-6">
+        {/* Columns 2 & 3: Visual Canvas, Code Execution & Explanations (9 cols on xl) */}
+        <div className="lg:col-span-8 xl:col-span-9 space-y-6">
           {isVisLoading ? (
             <div className="min-h-[420px] flex items-center justify-center glass-panel rounded-xl border border-slate-800">
               <LoadingSpinner size="lg" message="Generating step-by-step visualization..." />
@@ -353,6 +353,7 @@ export const VisualizationPage: React.FC = () => {
           )}
         </div>
       </div>
+
     </div>
   );
 };

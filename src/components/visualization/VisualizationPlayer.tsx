@@ -181,61 +181,84 @@ export const VisualizationPlayer: React.FC<VisualizationPlayerProps> = ({
   const isLinkedListAlgo = slug.includes('linked-list') || slug.includes('list');
 
   return (
-    <div className="space-y-6">
-      {/* Learning Mode Selector Header */}
-      <div className="flex items-center justify-between">
-        <LearningModeToggle currentMode={learningMode} onModeChange={handleModeChange} compact />
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+      {/* Left/Center Visual Canvas Column (7 cols out of 12) */}
+      <div className="xl:col-span-7 space-y-5">
+        {/* Learning Mode Selector Header */}
+        <div className="flex items-center justify-between">
+          <LearningModeToggle currentMode={learningMode} onModeChange={handleModeChange} compact />
+        </div>
+
+        {/* Visual Canvas Renderer Router */}
+        {isTreeAlgo ? (
+          <TreeVisualizationPanel step={currentStepData} />
+        ) : isLinkedListAlgo ? (
+          <LinkedListVisualizationPanel step={currentStepData} />
+        ) : visualizationType === 'GRAPH' ? (
+          <GraphVisualizer
+            nodes={
+              response.steps[0]?.visitedNodes
+                ? Array.from(
+                    new Set(
+                      response.steps.flatMap((s) =>
+                        [...(s.visitedNodes || []), ...(s.frontier || []), s.currentNode].filter(
+                          Boolean
+                        ) as string[]
+                      )
+                    )
+                  )
+                : undefined
+            }
+            currentNode={currentStepData?.currentNode}
+            visitedNodes={currentStepData?.visitedNodes}
+            frontier={currentStepData?.frontier}
+            action={currentStepData?.action}
+          />
+        ) : (
+          <ArrayVisualizer
+            array={currentStepData?.array || []}
+            indices={currentStepData?.indices || []}
+            action={currentStepData?.action}
+          />
+        )}
+
+        {/* Step Timeline & Progress Bar */}
+        <StepTimeline
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          currentStepData={currentStepData}
+          onStepSelect={handleStepSelect}
+        />
+
+        {/* Playback Controls */}
+        <PlaybackControls
+          isPlaying={isPlaying}
+          currentStep={currentStepIndex}
+          totalSteps={totalSteps}
+          speed={speed}
+          onPlayPause={handlePlayPause}
+          onReset={handleReset}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          onJumpToStart={handleJumpToStart}
+          onJumpToEnd={handleJumpToEnd}
+          onSpeedChange={setSpeed}
+        />
       </div>
 
-      {/* Visual Canvas Renderer Router */}
-      {isTreeAlgo ? (
-        <TreeVisualizationPanel step={currentStepData} />
-      ) : isLinkedListAlgo ? (
-        <LinkedListVisualizationPanel step={currentStepData} />
-      ) : visualizationType === 'GRAPH' ? (
-        <GraphVisualizer
-          nodes={response.steps[0]?.visitedNodes ? Array.from(new Set(response.steps.flatMap(s => [...(s.visitedNodes || []), ...(s.frontier || []), s.currentNode].filter(Boolean) as string[]))) : undefined}
-          currentNode={currentStepData?.currentNode}
-          visitedNodes={currentStepData?.visitedNodes}
-          frontier={currentStepData?.frontier}
-          action={currentStepData?.action}
+      {/* Right Column: Code Execution & Step Explanation (5 cols out of 12) */}
+      <div className="xl:col-span-5 space-y-5">
+        {/* Interactive Step-by-Step Code Execution Panel */}
+        <CodeExecutionPanel
+          slug={slug}
+          currentStepData={currentStepData}
+          implementations={implementations}
         />
-      ) : (
-        <ArrayVisualizer
-          array={currentStepData?.array || []}
-          indices={currentStepData?.indices || []}
-          action={currentStepData?.action}
-        />
-      )}
 
-      {/* Step Timeline & Progress Bar */}
-      <StepTimeline
-        currentStepIndex={currentStepIndex}
-        totalSteps={totalSteps}
-        currentStepData={currentStepData}
-        onStepSelect={handleStepSelect}
-      />
-
-      {/* Playback Controls */}
-      <PlaybackControls
-        isPlaying={isPlaying}
-        currentStep={currentStepIndex}
-        totalSteps={totalSteps}
-        speed={speed}
-        onPlayPause={handlePlayPause}
-        onReset={handleReset}
-        onPrev={handlePrev}
-        onNext={handleNext}
-        onJumpToStart={handleJumpToStart}
-        onJumpToEnd={handleJumpToEnd}
-        onSpeedChange={setSpeed}
-      />
-
-      {/* Synchronized Step Explanation Card */}
-      <StepExplanationCard step={currentStepData} mode={learningMode} />
-
-      {/* Interactive Step-by-Step Code Execution Panel */}
-      <CodeExecutionPanel slug={slug} currentStepData={currentStepData} implementations={implementations} />
+        {/* Synchronized Step Explanation Card */}
+        <StepExplanationCard step={currentStepData} mode={learningMode} />
+      </div>
     </div>
   );
+
 };
