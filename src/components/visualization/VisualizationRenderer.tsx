@@ -1,6 +1,8 @@
 import React from 'react';
 import { VisualizationStep, VisualizationType } from '../../types';
+import { VisualizationContract } from '../../types/contract';
 import { resolveVisualizationType } from './VisualizationRegistry';
+import { getRendererComponent } from './RendererRegistry';
 
 // Specialized Visualizer Components
 import { ArrayBarVisualizer } from './ArrayBarVisualizer';
@@ -26,86 +28,112 @@ import { ConvexHullVisualizer } from './ConvexHullVisualizer';
 interface VisualizationRendererProps {
   algorithmSlug: string;
   backendVisualizationType?: VisualizationType;
-  currentStep?: VisualizationStep;
+  currentStep?: VisualizationStep & { state?: Record<string, any> };
+  contract?: VisualizationContract;
+  rendererKey?: string;
 }
 
 export const VisualizationRenderer: React.FC<VisualizationRendererProps> = ({
   algorithmSlug,
   backendVisualizationType,
   currentStep,
+  contract,
+  rendererKey,
 }) => {
+  // Dual-Shape Reconciliation: ensure state envelope fields are available to components
+  const reconciledStep = React.useMemo(() => {
+    if (!currentStep) return undefined;
+    const stepState = currentStep.state || (currentStep as any).customState;
+    if (stepState && typeof stepState === 'object') {
+      return {
+        ...stepState,
+        ...currentStep,
+        customState: stepState,
+      };
+    }
+    return currentStep;
+  }, [currentStep]);
+
+  // Contract-driven resolution via RendererRegistry
+  const effectiveRendererKey = rendererKey || contract?.rendererKey;
+  if (effectiveRendererKey) {
+    const Component = getRendererComponent(effectiveRendererKey);
+    return <Component currentStep={reconciledStep} />;
+  }
+
+  // Fallback to type resolution for legacy components
   const resolvedType = resolveVisualizationType(algorithmSlug, backendVisualizationType);
 
   switch (resolvedType) {
     case 'CONVEX_HULL':
     case 'POINT_SET':
-      return <ConvexHullVisualizer currentStep={currentStep} />;
+      return <ConvexHullVisualizer currentStep={reconciledStep} />;
 
     case 'POINTER_ARRAY':
-      return <PointerArrayVisualizer currentStep={currentStep} />;
+      return <PointerArrayVisualizer currentStep={reconciledStep} />;
 
     case 'ARRAY_CELLS':
     case 'ARRAY_INDEXED':
-      return <IndexedArrayVisualizer currentStep={currentStep} />;
+      return <IndexedArrayVisualizer currentStep={reconciledStep} />;
 
     case 'SLIDING_WINDOW':
-      return <SlidingWindowVisualizer currentStep={currentStep} />;
+      return <SlidingWindowVisualizer currentStep={reconciledStep} />;
 
     case 'TWO_POINTER':
     case 'TWO_POINTERS':
-      return <TwoPointerVisualizer currentStep={currentStep} />;
+      return <TwoPointerVisualizer currentStep={reconciledStep} />;
 
     case 'LINKED_LIST':
     case 'DOUBLY_LINKED_LIST':
-      return <LinkedListVisualizer currentStep={currentStep} />;
+      return <LinkedListVisualizer currentStep={reconciledStep} />;
 
     case 'STACK':
-      return <StackVisualizer currentStep={currentStep} />;
+      return <StackVisualizer currentStep={reconciledStep} />;
 
     case 'QUEUE':
     case 'DEQUE':
-      return <QueueVisualizer currentStep={currentStep} />;
+      return <QueueVisualizer currentStep={reconciledStep} />;
 
     case 'AVL_TREE':
-      return <AVLTreeVisualizer currentStep={currentStep} />;
+      return <AVLTreeVisualizer currentStep={reconciledStep} />;
 
     case 'TREE':
     case 'BST':
     case 'BINARY_TREE':
-      return <TreeVisualizer currentStep={currentStep} />;
+      return <TreeVisualizer currentStep={reconciledStep} />;
 
     case 'HEAP':
-      return <HeapVisualizer currentStep={currentStep} />;
+      return <HeapVisualizer currentStep={reconciledStep} />;
 
     case 'WEIGHTED_GRAPH':
-      return <WeightedGraphVisualizer currentStep={currentStep} />;
+      return <WeightedGraphVisualizer currentStep={reconciledStep} />;
 
     case 'GRAPH':
     case 'GRAPH_NETWORK':
     case 'DIRECTED_GRAPH':
-      return <GraphVisualizer currentStep={currentStep} />;
+      return <GraphVisualizer currentStep={reconciledStep} />;
 
     case 'DP_TABLE':
     case 'MATRIX':
-      return <DPTableVisualizer currentStep={currentStep} />;
+      return <DPTableVisualizer currentStep={reconciledStep} />;
 
     case 'HASH_TABLE':
-      return <HashTableVisualizer currentStep={currentStep} />;
+      return <HashTableVisualizer currentStep={reconciledStep} />;
 
     case 'TRIE':
-      return <TrieVisualizer currentStep={currentStep} />;
+      return <TrieVisualizer currentStep={reconciledStep} />;
 
     case 'RECURSION_TREE':
-      return <RecursionTreeVisualizer currentStep={currentStep} />;
+      return <RecursionTreeVisualizer currentStep={reconciledStep} />;
 
     case 'BACKTRACKING_GRID':
     case 'GRID':
-      return <BacktrackingVisualizer currentStep={currentStep} />;
+      return <BacktrackingVisualizer currentStep={reconciledStep} />;
 
     case 'ARRAY_BAR':
     case 'ARRAY_BARS':
     case 'ARRAY':
     default:
-      return <ArrayBarVisualizer currentStep={currentStep} />;
+      return <ArrayBarVisualizer currentStep={reconciledStep} />;
   }
 };

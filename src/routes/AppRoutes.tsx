@@ -12,6 +12,7 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { AnalyticsPage } from '../pages/AnalyticsPage';
 import { FavoritesPage } from '../pages/FavoritesPage';
 import { AdminPage } from '../pages/AdminPage';
+import { AdminVisualizationAuditPage } from '../pages/AdminVisualizationAuditPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
@@ -37,6 +38,7 @@ export const AppRoutes: React.FC = () => {
       <Route path="/problems/:slug" element={<ProblemDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/admin/visualizations" element={<AdminVisualizationAuditPage />} />
 
       {/* Protected Routes (Authenticated Users) */}
       <Route element={<ProtectedRoute />}>
