@@ -60,16 +60,26 @@ export type SubmissionVerdict =
 export type VisualizationType =
   | 'ARRAY'
   | 'ARRAY_BAR'
+  | 'ARRAY_BARS'
+  | 'ARRAY_CELLS'
+  | 'POINTER_ARRAY'
   | 'ARRAY_INDEXED'
   | 'TWO_POINTER'
+  | 'TWO_POINTERS'
+  | 'SLIDING_WINDOW'
   | 'LINKED_LIST'
+  | 'DOUBLY_LINKED_LIST'
   | 'STACK'
   | 'QUEUE'
+  | 'DEQUE'
   | 'TREE'
+  | 'BINARY_TREE'
   | 'BST'
   | 'AVL_TREE'
   | 'HEAP'
   | 'GRAPH'
+  | 'GRAPH_NETWORK'
+  | 'DIRECTED_GRAPH'
   | 'WEIGHTED_GRAPH'
   | 'DP_TABLE'
   | 'RECURSION_TREE'
@@ -77,7 +87,13 @@ export type VisualizationType =
   | 'HASH_TABLE'
   | 'MATRIX'
   | 'INTERVAL'
+  | 'INTERVALS'
   | 'GRID'
+  | 'TRIE'
+  | 'CONVEX_HULL'
+  | 'POINT_SET'
+  | 'LINE_SWEEP'
+  | 'STRING_ALIGNMENT'
   | 'CUSTOM';
 
 export type ActionType =
@@ -385,21 +401,43 @@ export interface AnalyticsOverviewResponse {
 }
 
 // Visualization Request & Response Models
+export interface GraphNodeDto {
+  id: string;
+  label: string;
+  x?: number;
+  y?: number;
+}
+
 export interface GraphEdgeDto {
-  from: string;
-  to: string;
+  id?: string;
+  source?: string;
+  target?: string;
+  from?: string;
+  to?: string;
+  weight?: number;
 }
 
 export interface GraphVisualizationRequest {
-  nodes: string[];
+  nodes: (string | GraphNodeDto)[];
   edges: GraphEdgeDto[];
-  startNode: string;
+  startNode?: string;
+  targetNode?: string;
+  directed?: boolean;
+  weighted?: boolean;
 }
 
 export interface VisualizationRequest {
+  type?: string;
   input?: number[];
   target?: number;
   graph?: GraphVisualizationRequest;
+  points?: { x: number; y: number; label?: string }[];
+  listInput?: number[];
+  stackInput?: number[];
+  queueInput?: number[];
+  trieInput?: string[];
+  matrixInput?: (number | string)[][];
+  knapsackInput?: { weights: number[]; values: number[]; capacity: number };
 }
 
 export interface PointerState {
@@ -418,6 +456,49 @@ export interface CallStackFrame {
   returnValue?: string;
 }
 
+export interface TreeNodeSnapshot {
+  id: string | number;
+  val: number;
+  height?: number;
+  balanceFactor?: number;
+  leftId?: number | string | null;
+  rightId?: number | string | null;
+  isPivot?: boolean;
+}
+
+export interface DPStateSnapshot {
+  matrix: (number | string)[][];
+  currentCell?: [number, number];
+  dependentCells?: [number, number][];
+  formula?: string;
+}
+
+export interface GraphStateSnapshot {
+  nodes?: GraphNodeDto[];
+  edges?: GraphEdgeDto[];
+  directed?: boolean;
+  weighted?: boolean;
+  activeNodeIds?: string[];
+  visitedNodeIds?: string[];
+  activeEdgeIds?: string[];
+  traversedEdgeIds?: string[];
+  queuedNodeIds?: string[];
+  stackNodeIds?: string[];
+  currentNodeId?: string;
+  sourceNodeId?: string;
+  targetNodeId?: string;
+  shortestDistances?: Record<string, number | string>;
+  predecessors?: Record<string, string | null>;
+  mstEdgeIds?: string[];
+  rejectedEdgeIds?: string[];
+  candidateEdgeId?: string;
+  pathNodeIds?: string[];
+  pathEdgeIds?: string[];
+  currentWeight?: number;
+  totalWeight?: number;
+  explanation?: string;
+}
+
 export interface VisualizationStep {
   step: number;
   action: ActionType;
@@ -427,10 +508,14 @@ export interface VisualizationStep {
   visitedNodes?: string[];
   frontier?: string[];
   pointers?: PointerState[];
+  pointerRecord?: Record<string, number>;
   matrix?: (number | string)[][];
   stackItems?: (number | string)[];
   queueItems?: (number | string)[];
   callStack?: CallStackFrame[];
+  treeSnapshot?: TreeNodeSnapshot[];
+  dpState?: DPStateSnapshot;
+  graphState?: GraphStateSnapshot;
   balanceFactors?: Record<number, number>;
   nodeHeights?: Record<number, number>;
   rotationInfo?: {
@@ -444,6 +529,7 @@ export interface VisualizationStep {
   advancedExplanation?: string;
   whyMessage?: string;
   complexityImpact?: string;
+  customState?: Record<string, any>;
 }
 
 export interface VisualizationResponse {

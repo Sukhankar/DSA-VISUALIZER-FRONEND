@@ -10,9 +10,12 @@ import {
   VisualizationResponse,
   VisualizationRequest,
   GraphVisualizationRequest,
+  LearningLevel,
 } from '../types';
 import { ArrayInput } from '../components/visualization/ArrayInput';
 import { GraphInput } from '../components/visualization/GraphInput';
+import { InputConfigPanel } from '../components/visualization/InputConfigPanel';
+import { AlgorithmResourceSection } from '../components/visualization/AlgorithmResourceSection';
 import { VisualizationPlayer } from '../components/visualization/VisualizationPlayer';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
@@ -24,7 +27,7 @@ import { AlgorithmOverviewCard } from '../components/visualization/AlgorithmOver
 
 
 
-import { LearningLevel } from '../types';
+import { getAlgorithmConfig, getStoredInput } from '../config/visualizationConfig';
 
 export const VisualizationPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -68,33 +71,23 @@ export const VisualizationPage: React.FC = () => {
         setAlgorithm(algoData);
         if (richData) setRichDetails(richData);
 
-        const isGraph =
-          algoData.categorySlug === 'graphs' ||
-          algoData.slug === 'bfs' ||
-          algoData.slug === 'dfs';
+        const config = getAlgorithmConfig(slug);
+        const stored = getStoredInput(slug);
+        const inputState = stored || config.defaultInput;
 
-        let initialReq: VisualizationRequest = {};
-        if (isGraph) {
-          initialReq = {
-            graph: {
-              nodes: ['A', 'B', 'C', 'D', 'E'],
-              edges: [
-                { from: 'A', to: 'B' },
-                { from: 'A', to: 'C' },
-                { from: 'B', to: 'D' },
-                { from: 'C', to: 'E' },
-                { from: 'D', to: 'E' },
-              ],
-              startNode: 'A',
-            },
-          };
-        } else {
-          const isBS = slug === 'binary-search';
-          initialReq = {
-            input: isBS ? [1, 3, 5, 7, 9, 11, 13, 15] : [5, 1, 4, 2, 8],
-            target: algoData.categorySlug === 'searching' ? (isBS ? 7 : 4) : undefined,
-          };
-        }
+        const initialReq: VisualizationRequest = {
+          type: inputState.dataStructureType || inputState.structureType,
+          input: inputState.twoPointerInput?.values || inputState.slidingWindowInput?.values || inputState.heapInput?.values || inputState.input,
+          target: inputState.twoPointerInput?.targetSum || inputState.slidingWindowInput?.windowSize || inputState.target,
+          points: inputState.pointsInput,
+          listInput: inputState.listInput,
+          stackInput: inputState.stackInput,
+          queueInput: inputState.queueInput,
+          trieInput: inputState.trieInput,
+          matrixInput: inputState.matrixInput,
+          knapsackInput: inputState.knapsackInput,
+          graph: inputState.graph,
+        };
 
         setIsVisLoading(true);
         visualizationService
@@ -132,35 +125,28 @@ export const VisualizationPage: React.FC = () => {
     };
   }, [slug, isAuthenticated]);
 
-  const handleGenerateArray = useCallback(
-    async (input: number[], target?: number) => {
+  const handleRunVisualizationState = useCallback(
+    async (inputState: any) => {
       if (!slug) return;
       setIsVisLoading(true);
       setError(null);
-      try {
-        const data = await visualizationService.generateVisualization(slug, {
-          input,
-          target,
-        });
-        setVisualization(data);
-      } catch (err) {
-        setError(getErrorMessage(err));
-      } finally {
-        setIsVisLoading(false);
-      }
-    },
-    [slug]
-  );
 
-  const handleGenerateGraph = useCallback(
-    async (graph: GraphVisualizationRequest) => {
-      if (!slug) return;
-      setIsVisLoading(true);
-      setError(null);
+      const req: VisualizationRequest = {
+        type: inputState.dataStructureType || inputState.structureType,
+        input: inputState.twoPointerInput?.values || inputState.slidingWindowInput?.values || inputState.heapInput?.values || inputState.input,
+        target: inputState.twoPointerInput?.targetSum || inputState.slidingWindowInput?.windowSize || inputState.target,
+        points: inputState.pointsInput,
+        listInput: inputState.listInput,
+        stackInput: inputState.stackInput,
+        queueInput: inputState.queueInput,
+        trieInput: inputState.trieInput,
+        matrixInput: inputState.matrixInput,
+        knapsackInput: inputState.knapsackInput,
+        graph: inputState.graph,
+      };
+
       try {
-        const data = await visualizationService.generateVisualization(slug, {
-          graph,
-        });
+        const data = await visualizationService.generateVisualization(slug, req);
         setVisualization(data);
       } catch (err) {
         setError(getErrorMessage(err));
@@ -302,67 +288,42 @@ export const VisualizationPage: React.FC = () => {
           />
 
 
-          {/* 2. Input Configuration Card */}
-          <Card className="bg-slate-900/90 border-slate-800 p-5 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-200 uppercase tracking-wider">
-              <Sliders className="w-4 h-4 text-indigo-400" />
-              <span>Input Configuration</span>
-            </div>
+          {/* 2. Context-Aware Structure Input Configuration */}
+          <InputConfigPanel
+            algorithmSlug={algorithm.slug}
+            onRunVisualization={(inputState) => {
+              handleRunVisualizationState(inputState);
+            }}
+            isLoading={isVisLoading}
+          />
 
-            {isGraphAlgo ? (
-              <GraphInput onGenerate={handleGenerateGraph} isLoading={isVisLoading} />
-            ) : (
-              <ArrayInput
-                onGenerate={handleGenerateArray}
-                isSearching={isSearchAlgo}
-                isBinarySearch={isBinarySearch}
-                isLoading={isVisLoading}
-                label={
-                  algorithm.categorySlug === 'trees' || algorithm.slug.includes('tree') || algorithm.slug.includes('avl')
-                    ? 'Tree Node Values (Insertion Order)'
-                    : algorithm.categorySlug === 'linked-lists' || algorithm.slug.includes('list')
-                    ? 'Linked List Node Values'
-                    : 'Input Array Elements (comma-separated)'
-                }
-                defaultInput={
-                  algorithm.categorySlug === 'trees' || algorithm.slug.includes('tree') || algorithm.slug.includes('avl')
-                    ? '15, 10, 20, 8, 12, 17, 25'
-                    : isBinarySearch
-                    ? '1, 3, 5, 7, 9, 11, 13, 15'
-                    : '5, 1, 4, 2, 8'
-                }
-                defaultTarget={isBinarySearch ? 7 : 4}
-              />
-            )}
-
-            {/* Algorithm Output & Execution Result Display */}
-            {visualization && visualization.steps && visualization.steps.length > 0 && (
-              <div className="mt-4 p-3 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2 font-mono text-xs">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                  <span className="font-bold text-slate-300 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Algorithm Execution Output</span>
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-500/30 rounded font-bold">
-                    {visualization.steps.length} Steps
-                  </span>
-                </div>
-
-                <div className="text-slate-300 text-[11px] leading-relaxed">
-                  {visualization.steps[visualization.steps.length - 1].message}
-                </div>
-
-                {visualization.steps[visualization.steps.length - 1].array && (
-                  <div className="pt-1 flex items-center justify-between text-[11px] text-slate-400">
-                    <span>Output Array / Nodes:</span>
-                    <span className="font-bold text-indigo-300">
-                      [{visualization.steps[visualization.steps.length - 1].array?.join(', ')}]
-                    </span>
-                  </div>
-                )}
+          {/* Algorithm Output & Execution Result Display */}
+          {visualization && visualization.steps && visualization.steps.length > 0 && (
+            <Card className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-2 font-mono text-xs shadow-lg">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                <span className="font-bold text-slate-300 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Algorithm Execution Output</span>
+                </span>
+                <span className="text-[10px] px-2 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-500/30 rounded font-bold">
+                  {visualization.steps.length} Steps
+                </span>
               </div>
-            )}
-          </Card>
+
+              <div className="text-slate-300 text-[11px] leading-relaxed">
+                {visualization.steps[visualization.steps.length - 1].message}
+              </div>
+
+              {visualization.steps[visualization.steps.length - 1].array && (
+                <div className="pt-1 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Output Array / Nodes:</span>
+                  <span className="font-bold text-indigo-300">
+                    [{visualization.steps[visualization.steps.length - 1].array?.join(', ')}]
+                  </span>
+                </div>
+              )}
+            </Card>
+          )}
         </div>
 
         {/* Columns 2 & 3: Visual Canvas, Code Execution & Explanations (9 cols on xl) */}
@@ -380,17 +341,18 @@ export const VisualizationPage: React.FC = () => {
               level={level}
             />
           ) : (
-
             <div className="min-h-[420px] flex items-center justify-center glass-panel rounded-xl border border-slate-800">
               <div className="text-center text-xs text-slate-400 space-y-2">
                 <Sparkles className="w-8 h-8 text-indigo-400 mx-auto" />
-                <p>Click "Generate Visualization" to start interactive step execution.</p>
+                <p>Click "Run Visualization" to start interactive step execution.</p>
               </div>
             </div>
           )}
         </div>
       </div>
 
+      {/* Structured 15-Section Learning & Reference Footer */}
+      <AlgorithmResourceSection algorithmName={algorithm.name} algorithmSlug={algorithm.slug} />
     </div>
   );
 };

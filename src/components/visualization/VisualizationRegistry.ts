@@ -1,4 +1,5 @@
 import { VisualizationType } from '../../types';
+import { ALGORITHM_VISUALIZATION_CONFIGS } from '../../config/visualizationConfig';
 
 /**
  * Resolves the visual metaphor for a given algorithm slug and optional backend type.
@@ -7,116 +8,70 @@ export function resolveVisualizationType(
   slug: string,
   backendType?: VisualizationType
 ): VisualizationType {
-  // 1. If backend supplies a specialized type (other than generic ARRAY), honor it.
-  if (backendType && backendType !== 'ARRAY') {
+  const s = slug.toLowerCase();
+
+  // 1. Check explicit config mapping first
+  if (ALGORITHM_VISUALIZATION_CONFIGS[s]) {
+    return ALGORITHM_VISUALIZATION_CONFIGS[s].visualizationType;
+  }
+
+  // 2. If backend supplies a specific non-generic type, honor it
+  if (backendType && backendType !== 'ARRAY' && backendType !== 'ARRAY_BAR') {
     return backendType;
   }
 
-  const s = slug.toLowerCase();
-
-  // 2. Graphs (Must check BFS/DFS before generic "search" string match!)
-  if (
-    s.includes('dijkstra') ||
-    s.includes('bellman') ||
-    s.includes('floyd') ||
-    s.includes('kruskal') ||
-    s.includes('prim')
-  ) {
+  // 3. Fallback resolution rules by slug keywords
+  if (s.includes('convex') || s.includes('jarvis') || s.includes('graham') || s.includes('hull')) {
+    return 'CONVEX_HULL';
+  }
+  if (s.includes('dijkstra') || s.includes('bellman') || s.includes('floyd') || s.includes('kruskal') || s.includes('prim')) {
     return 'WEIGHTED_GRAPH';
   }
-
-  if (
-    s.includes('bfs') ||
-    s.includes('dfs') ||
-    s.includes('breadth') ||
-    s.includes('depth') ||
-    s.includes('graph') ||
-    s.includes('topological')
-  ) {
-    return 'GRAPH';
+  if (s.includes('bfs') || s.includes('dfs') || s.includes('graph') || s.includes('topological')) {
+    return 'GRAPH_NETWORK';
   }
-
-  // 3. Trees & Heaps (Must check trees before generic "search" match!)
   if (s.includes('avl')) {
     return 'AVL_TREE';
   }
-  if (
-    s.includes('bst') ||
-    s.includes('tree') ||
-    s.includes('ancestor') ||
-    s.includes('inorder') ||
-    s.includes('preorder') ||
-    s.includes('postorder') ||
-    s.includes('trie') ||
-    s.includes('fenwick') ||
-    s.includes('segment') ||
-    s.includes('rbt')
-  ) {
+  if (s.includes('trie')) {
+    return 'TRIE';
+  }
+  if (s.includes('bst') || s.includes('tree')) {
     return 'BST';
   }
   if (s.includes('heap')) {
     return 'HEAP';
   }
-
-  // 4. Linked List
-  if (s.includes('linked-list') || s.includes('list-traversal') || s.includes('cycle')) {
+  if (s.includes('doubly') && s.includes('list')) {
+    return 'DOUBLY_LINKED_LIST';
+  }
+  if (s.includes('linked-list') || s.includes('list')) {
     return 'LINKED_LIST';
   }
-
-  // 5. Stack & Queue
-  if (s.includes('stack') || s.includes('parentheses') || s.includes('infix')) {
+  if (s.includes('stack')) {
     return 'STACK';
   }
-  if (s.includes('queue') || s.includes('sliding-window')) {
+  if (s.includes('queue')) {
     return 'QUEUE';
   }
-
-  // 6. Searching in Arrays
-  if (
-    s.includes('binary-search') ||
-    s.includes('linear-search') ||
-    s.includes('jump-search') ||
-    s.includes('interpolation') ||
-    s.includes('kadane') ||
-    s.includes('search')
-  ) {
-    return 'ARRAY_INDEXED';
+  if (s.includes('sliding-window') || s.includes('window') || s.includes('kadane')) {
+    return 'SLIDING_WINDOW';
   }
-
-  // 7. Two Pointers / Sliding Window
-  if (
-    s.includes('two-sum') ||
-    s.includes('pointer') ||
-    s.includes('palindrome') ||
-    s.includes('container') ||
-    s.includes('zeroes') ||
-    s.includes('3sum')
-  ) {
-    return 'TWO_POINTER';
+  if (s.includes('binary-search') || s.includes('linear-search') || s.includes('jump-search') || s.includes('interpolation')) {
+    return 'POINTER_ARRAY';
   }
-
-  // 8. Dynamic Programming & Recursion
-  if (
-    s.includes('knapsack') ||
-    s.includes('fibonacci') ||
-    s.includes('coin') ||
-    s.includes('lcs') ||
-    s.includes('edit-distance') ||
-    s.includes('dp')
-  ) {
+  if (s.includes('two-sum') || s.includes('pointer') || s.includes('two-pointers')) {
+    return 'TWO_POINTERS';
+  }
+  if (s.includes('dp') || s.includes('knapsack') || s.includes('lcs') || s.includes('fibonacci')) {
     return 'DP_TABLE';
   }
-
-  // 9. Backtracking
-  if (
-    s.includes('n-queens') ||
-    s.includes('sudoku') ||
-    s.includes('subset') ||
-    s.includes('permutation')
-  ) {
-    return 'BACKTRACKING_GRID';
+  if (s.includes('hash')) {
+    return 'HASH_TABLE';
+  }
+  if (s.includes('factorial') || s.includes('recursion') || s.includes('call-stack')) {
+    return 'RECURSION_TREE';
   }
 
-  // 10. Default Sorting / Array Bar
-  return 'ARRAY_BAR';
+  return 'ARRAY_BARS';
 }

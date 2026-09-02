@@ -140,7 +140,7 @@ export const IndexedArrayVisualizer: React.FC<IndexedArrayVisualizerProps> = ({ 
           </span>
         ) : (
           <span className="text-slate-300 flex items-center gap-1.5">
-            <AlertTriangle className="w-4 h-4 text-amber-400" /> Active range: index [{lowIndex !== -1 ? lowIndex : 0} .. {highIndex !== -1 ? highIndex : array.size ? array.length - 1 : 0}]
+            <AlertTriangle className="w-4 h-4 text-amber-400" /> Active range: index [{lowIndex !== -1 ? lowIndex : 0} .. {highIndex !== -1 ? highIndex : array.length ? array.length - 1 : 0}]
           </span>
         )}
       </div>
