@@ -1,75 +1,127 @@
-# CodeLoom DSA Visualizer — Frontend Web Client
+# 🎨 CodeLoom DSA Visualizer — Frontend Web Client
 
-> *"Interactive React + TypeScript interface for step-by-step algorithm visualizer, LeetCode-style practice workspace, and gamified Practice Arena."*
+<div align="center">
 
-This repository contains the web client for **CodeLoom DSA Visualizer**, built with **React 18**, **TypeScript**, **Vite**, **Lucide Icons**, and **TailwindCSS / Vanilla CSS**.
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Nginx_Alpine-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)
 
----
+<br/>
 
-## ✨ Features
+> **Interactive Algorithm Visualization, LeetCode-Style Practice Workspace & Gamified Learning Platform**  
+> *Empowering developers to visualize Data Structures & Algorithms step-by-step with real-time execution controls, code playgrounds, practice arenas, and skill analytics.*
 
-### 1. 🎯 Practice Arena Hub & Session Runner (`/practice`)
-- **Daily Challenge Banner**: Prominently features the daily algorithm challenge with bonus XP rewards and completion status.
-- **6 Interactive Practice Modes**:
-  - **Quick Practice**: 3 random problems for quick habit building.
-  - **Timed Sprint**: Race against the clock with custom timers (15m, 30m, 45m).
-  - **Topic Focus**: Category-specific practice (Trees, Graphs, DP, Sorting).
-  - **Streak Builder**: Daily streak maintenance challenges.
-  - **Random Shuffle**: Interview readiness mixed problem sets.
-- **Active Session Banner**: High-visibility banner allowing users to seamlessly resume active practice sessions.
-- **Practice Session Runner (`/practice/session/:id`)**: Split-screen problem navigator, multi-language code editor (Java, Python, JS, C++), instant test case execution, submission, and celebration modals upon completing session goals.
-
-### 2. 🔍 Algorithm Explorer & Detail Portal
-- Browse algorithms by category (Arrays, Sorting, Searching, Graphs, Dynamic Programming, Trees).
-- Filter by difficulty, time/space complexity, and real-time search queries.
-- Detailed breakdown with intuition explanations, code snippets in multiple languages, and time/space complexity cards.
-
-### 3. 🎬 Interactive Visualization Player
-- State animation rendering for **Arrays** (Sorting/Searching bars with comparison, swap, pivot highlights) and **Graphs** (SVG nodes & edges with BFS/DFS visit highlights).
-- Playback controls: Play, Pause, Step Forward, Step Backward, Speed adjustment slider (0.25x to 4x), and custom array/graph input generators.
-
-### 4. 💻 LeetCode-Style Problem Practice Workspace
-- Problem explorer with difficulty tags (`EASY`, `MEDIUM`, `HARD`), acceptance rates, and topic tags.
-- Split-pane problem detail workspace with problem description, sample cases, constraints, and interactive code editor.
-
-### 5. 📊 Gamification & Learning Analytics (`/analytics`)
-- **Daily Streak Card**: Live flame indicator with streak freeze protections.
-- **Level & XP Progress**: Level badge and XP progress bar.
-- **Activity Heatmap**: GitHub-style green contribution grid with interactive hover tooltips.
-- **Topic Skill Radar**: Custom SVG spider/radar chart displaying mastery across DSA categories.
-- **Achievement Showcase**: Trophy showcase highlighting unlocked badges with gold glow.
-- **Global Leaderboard**: Ranked top 10 learners by total XP.
+</div>
 
 ---
 
-## 🛠️ Project Structure
+## 💡 Overview
+
+**CodeLoom DSA Visualizer Frontend** is a modern, high-performance single-page web application (SPA) built with **React 18**, **TypeScript**, **Vite**, and **TailwindCSS**. It provides step-by-step interactive algorithm animations, a split-pane practice arena with multi-language code editing, interactive SVG charts, and streak/XP analytics.
+
+---
+
+## 🏛️ Frontend Client Architecture
+
+```mermaid
+graph TD
+    User[👤 Learner / User] --> Router[🛣️ React Router DOM]
+    
+    subgraph Route Views & Portals
+        Router --> Home[🏠 Home Dashboard]
+        Router --> AlgoExplorer[🔍 Algorithm Explorer & Detail View]
+        Router --> VisPlayer[🎬 Universal Visualization Player]
+        Router --> PracticeArena[🎯 Practice Arena Hub & Session Runner]
+        Router --> AnalyticsPage[📊 Skill Analytics & Leaderboards]
+    end
+
+    subgraph State & Context Layer
+        Home & AlgoExplorer & VisPlayer & PracticeArena & AnalyticsPage --> AuthCtx[🔒 AuthContext]
+        AuthCtx --> Storage[💾 LocalStorage JWT Token Manager]
+    end
+
+    subgraph Visualization & Rendering Engine
+        VisPlayer --> RendererRegistry[⚡ Universal Renderer Registry]
+        RendererRegistry --> ArrayRenderer[📊 Array Visualizer - Canvas / CSS]
+        RendererRegistry --> GraphRenderer[🕸️ Graph Visualizer - SVG Nodes & Edges]
+        RendererRegistry --> TreeRenderer[🌲 Tree Visualizer - Dynamic SVG Layout]
+        VisPlayer --> PlaybackControls[⏯️ Playback Controller Engine - Speed, Step, Pause]
+    end
+
+    subgraph API Integration & Network Layer
+        AuthCtx & VisPlayer & PracticeArena & AnalyticsPage --> AxiosClient[🌐 Axios API Service Layer]
+        AxiosClient -->|Bearer Auth Interceptor| Backend[⚡ Backend Spring Boot Service]
+    end
+```
+
+---
+
+## ⚡ Key Modules & Experience Features
+
+### 1. 🎬 Universal Interactive Visualization Player (`/visualizer/:slug`)
+- **Step Playback Controls**: Full control over execution with Play, Pause, Step Forward, Step Backward, and variable playback speed slider (0.25x to 4.0x).
+- **Structure-Aware Renderers**:
+  - **Array Visualizer**: Dynamic element bar charts with active highlight states for comparisons, swaps, pivots, and sorted ranges.
+  - **Graph Visualizer**: Dynamic SVG graph layout rendering node selection, edge traversal paths, and shortest-path animations (BFS, DFS, Dijkstra).
+  - **Tree Visualizer**: Smooth node layout positioning for binary search trees and heap structures.
+- **Custom Input Generators**: Generate random data arrays, custom graph node/edge configurations, or pre-configured target inputs.
+
+### 2. 🎯 Practice Arena Hub & Session Runner (`/practice`)
+- **Interactive Practice Modes**:
+  - **Daily Challenge**: Highlighted algorithm problem with XP multipliers.
+  - **Quick Practice**: Fast 3-problem quick sprint.
+  - **Timed Sprint**: Race against the clock (15m, 30m, 45m).
+  - **Topic Focus**: Targeted category sessions (Trees, Dynamic Programming, Graphs).
+- **Split-Pane Session Workspace (`/practice/session/:id`)**:
+  - Resizable split-view problem navigator & multi-language code editor (Java, Python, JavaScript, C++).
+  - Instant test case evaluation runner, submission feedback, and celebration modals.
+
+### 3. 📊 Gamification & Analytics Portal (`/analytics`)
+- **GitHub-Style Heatmap**: Visual contribution grid tracking daily practice sessions and completed algorithm challenges.
+- **Topic Skill Radar**: Custom SVG spider chart depicting category mastery levels across DSA domains.
+- **Streak & XP Progress**: Dynamic flame indicator, level advancement cards, XP ledger, and achievement trophy badges.
+- **Global Leaderboard**: Live ranking of top community coders by XP earned.
+
+---
+
+## 🛠️ Technology Stack
+
+| Library / Tool | Category | Usage & Purpose |
+| :--- | :--- | :--- |
+| **React 18** | UI Framework | Component-driven user interface architecture |
+| **TypeScript 5** | Language | End-to-end strict type safety & DTO contracts |
+| **Vite 5** | Build Tool | Ultra-fast HMR and optimized production bundling |
+| **TailwindCSS & CSS3** | Styling | Responsive layout utilities & dark glassmorphism design |
+| **Lucide React** | Icons | Crisp vector iconography |
+| **Axios** | HTTP Client | Request/Response interceptors & JWT auth management |
+| **Canvas & Dynamic SVG** | Rendering | Real-time algorithmic visualizer drawing engines |
+| **Nginx Alpine** | Production Web Server | SPA routing fallback & API reverse proxying |
+
+---
+
+## 📁 Directory Architecture
 
 ```text
-frontend/
-├── dist/                      # Production build output
-├── nginx.conf                 # Nginx SPA configuration & API reverse proxy
-├── public/                    # Static assets & favicon
-└── src/
-    ├── api/                   # Axios API service modules
-    │   ├── apiClient.ts       # Axios instance with JWT interceptor
-    │   ├── algorithmService.ts
-    │   ├── analyticsService.ts
-    │   ├── practiceService.ts
-    │   ├── problemService.ts
-    │   └── submissionService.ts
-    ├── components/            # Reusable UI components
-    │   ├── algorithm/         # Detail views, snippets, examples, favorites
-    │   ├── analytics/         # Heatmap, Radar Chart, Streak Card, Badges, Leaderboard
-    │   ├── dashboard/         # Stat cards, recent activity, continue learning
-    │   ├── layout/            # Navbar, Footer, AppLayout
-    │   ├── practice/          # Daily Challenge, Practice Modes, Session Header & Results Modal
-    │   ├── ui/                # Buttons, Cards, Inputs, Badges, Spinners
-    │   └── visualization/     # Array Visualizer, Graph Visualizer, Playback Controls
-    ├── context/               # AuthContext & global state providers
-    ├── pages/                 # Route pages (Home, Algorithms, Visualizer, Problems, Practice Arena, Analytics)
-    ├── routes/                # Protected & Public route setup
-    ├── types/                 # TypeScript interfaces and DTO types
-    └── utils/                 # Storage & formatting helpers
+src/
+├── api/                   # Axios HTTP services & endpoint interfaces
+│   ├── apiClient.ts       # Central Axios instance with JWT auth header interceptor
+│   ├── algorithmService.ts# Algorithm catalog & visualization snapshot fetcher
+│   ├── analyticsService.ts# User activity stats, streak, heatmap & leaderboard APIs
+│   └── practiceService.ts # Session runner, mode setup & submission endpoints
+├── components/            # UI Component Architecture
+│   ├── algorithm/         # Detail views, snippet renderers, code tab panels
+│   ├── analytics/         # Activity heatmap grid, SVG skill radar, streak cards
+│   ├── layout/            # Navigation header, sidebar, app container layout
+│   ├── practice/          # Daily challenge banner, mode picker, workspace split-pane
+│   ├── ui/                # Buttons, cards, modals, dropdowns, indicators
+│   └── visualization/     # Array visualizer, graph SVG visualizer, playback bar
+├── context/               # Global state providers (AuthContext, JWT storage)
+├── pages/                 # Main route views (Home, Algorithms, Visualizer, Arena, Analytics)
+├── types/                 # TypeScript DTO models & UI state declarations
+└── utils/                 # Storage helpers, date formatters, state helpers
 ```
 
 ---
@@ -82,29 +134,44 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file in the root of the `frontend` folder:
+Create a `.env` file in the root of the `frontend` directory:
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api/v1
 ```
 
-### 3. Start Development Server
+### 3. Launch Development Server
 ```bash
 npm run dev
 ```
-Open `http://localhost:5173` in your browser.
+Open **`http://localhost:5173`** in your browser.
 
 ---
 
-## 🧪 Type Check & Production Build
+## 🐳 Production Build & Docker Setup
 
-### TypeScript Validation & Build
+### Manual Build
+To generate static production bundle in `dist/`:
 ```bash
 npm run build
 ```
-The optimized static bundle will be generated in `dist/`.
+
+### Docker Container Deployment
+Build and run the Nginx SPA container:
+
+```bash
+# 1. Build Container Image
+docker build -t codeloom-dsa-frontend .
+
+# 2. Run Nginx Container
+docker run -d -p 80:80 \
+  -e VITE_API_BASE_URL=http://localhost:8080/api/v1 \
+  --name dsa-frontend codeloom-dsa-frontend
+```
+
+Access the application at **`http://localhost`**.
 
 ---
 
 ## 📜 License
 
-Distributed under the MIT License.
+Distributed under the **MIT License**.
