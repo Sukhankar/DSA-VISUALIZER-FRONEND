@@ -1,11 +1,11 @@
-# 🧵 CodeLoom
+# 🏴‍☠️ CodeLoom — The Grand Line of DSA Visualizers
 
-### DSA Visualizer & Interactive Learning Playground
+### Interactive Algorithm Playground & Code Execution Arena
 
 <div align="center">
 
   <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=38BDF8&center=true&vCenter=true&width=650&lines=Learn+algorithms+by+watching+them+execute;Step-by-step+state-aware+visualization;Interactive+LeetCode-style+Practice+Arena;Gamified+XP%2C+Streaks+%26+Skill+Analytics" alt="Typing SVG Header" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=38BDF8&center=true&vCenter=true&width=650&lines=Set+sail+beyond+static+pseudocode;Chart+every+step+from+East+Blue+to+New+World;Interactive+LeetCode-style+Practice+Arena;Gamified+XP%2C+Bounties+%26+Skill+Analytics" alt="Typing SVG Header" />
   </a>
 
   <br/>
@@ -21,116 +21,117 @@
 
   <br/>
 
-  > *Learn algorithms by watching them execute — step by step, state by state, with the actual data structure in front of you.*
+  > *Set sail beyond static pseudocode — watch data structures mutate step-by-step, conquer coding practice arenas, and claim your place on the global leaderboard.*
 
 </div>
 
 ---
 
-## DSA hits different when you can actually see it.
+## 🌊 The Voyage Begins: DSA hits different when you can actually see it.
 
-You read:
+Navigating the Grand Line of Data Structures & Algorithms is notorious for sinking devs in stormy seas of static text.
+
+You read the navigation logbook:
 
 ```text
 mid = left + (right - left) / 2
 ```
 
-and understand the syntax. But understanding the algorithm is different.
+You get the syntax. But out on the open sea, understanding the algorithm in motion is a whole different beast.
 
-Where is `left`?  
-Why did `right` move?  
-Why did this tree node balance itself?  
-Why did the heap swap parent and child?  
-Why did Dijkstra choose that node over the cheaper adjacent path?  
-What *exactly* changed between step 7 and step 8?
+- Where did `left` anchor?
+- Why did `right` drift across the array?
+- Why did that binary tree node execute an AVL rotation?
+- Why did Dijkstra pick node `C` over the tempting short edge to `B`?
+- What *exactly* shifted between step 7 and step 8?
 
-DSA shouldn't feel like memorizing a PDF. **CodeLoom** exists to answer those questions visually.
+CodeLoom wasn't built to be another boring PDF manual. It’s your visual Log Pose — designed to chart every pointer, memory mutation, and state transition in real-time.
 
-Stop staring at pseudocode. Press play.
+Stop staring at dead pseudocode. Take the wheel and press play.
 
 ---
 
-## Welcome to the playground 🧵
+## ⚓ The Navigator's Loop: Welcome to the Playground 🏴‍☠️
 
-The goal of CodeLoom isn't just to "finish algorithms". The goal is to build genuine intuition.
+The goal isn't to blindly copy-paste solutions to cross the sea. The goal is building unshakeable algorithmic intuition.
 
 ```text
-Learn
-  ↓
-Visualize
-  ↓
-Experiment
-  ↓
-Practice
-  ↓
-Track Progress
-  ↓
-Repeat
+Chart Course (Learn)
+         ↓
+Navigate Steps (Visualize)
+         ↓
+Test Stormy Waters (Experiment)
+         ↓
+Battle Problems (Practice)
+         ↓
+Claim Bounties & XP (Track Progress)
+         ↓
+Set Sail Again (Repeat)
 ```
 
-Understand the pointer. Watch the state change. Get it.
+Understand the pointer. Watch memory move. Conquer the Grand Line.
 
 ---
 
-## VISUALIZATION
+## 🗺️ VISUALIZATION
 
-## Stop reading the algorithm. Watch it happen.
+## Stop reading the logbook. Watch the voyage happen.
 
-CodeLoom is **structure-aware**. We don't reduce every single algorithm to bar charts. Each data structure gets the visual abstraction that actually makes sense for how it works in memory.
+CodeLoom is **structure-aware**. We don't just dump bar charts and call it a day. Every data structure gets the exact visual abstraction needed to navigate its logic.
 
-### Structure-Aware Abstractions
+### Structure-Aware Abstractions Across the Seas
 
-- **Arrays & Sorting**: Color-coded element bars showing active comparison, swap, pivot, and sorted bounds.
+- **Arrays & Sorting (East Blue)**: Color-coded element bars detailing active comparisons, swaps, pivots, and sorted bounds.
   ```text
   [64]  [25]  [12]  [22]  [11]
   ```
 
-- **Binary Search & Two Pointers**: Synchronized `LEFT`, `MID`, and `RIGHT` pointer markers tracking index bounds in real-time.
+- **Binary Search & Two Pointers**: Dual pointer anchors (`LEFT`, `MID`, `RIGHT`) tracking search space contraction in real-time.
   ```text
   LEFT        MID             RIGHT
    ↓           ↓                ↓
   [11]  [22]  [25]  [37]  [42]  [58]  [71]
   ```
 
-- **Singly & Doubly Linked Lists**: Node blocks linked by directional pointers showing head, tail, next, and prev mutations.
+- **Linked Lists**: Node islands connected by pointer links highlighting `HEAD`, `TAIL`, `NEXT`, and `PREV` pointer mutations.
   ```text
   HEAD
    ↓
   [10] → [20] → [30] → NULL
   ```
 
-- **Trees & AVL Rotations**: Hierarchy layout positioning nodes dynamically, highlighting parent-child traversal paths and balancing rotations.
+- **Trees & AVL Rotations**: Dynamic tree hierarchy rendering balance factors, parent-child traversals, and rotation transitions.
   ```text
             [50]
            /    \
         [30]    [70]
   ```
 
-- **Graphs (BFS, DFS, Dijkstra)**: Dynamic node-edge network layout representing visit states, traversal queues, and shortest path relaxation.
+- **Graphs (BFS, DFS, Dijkstra)**: Node-edge networks displaying visit queues, edge traversal paths, and shortest path distance relaxations.
   ```text
   A ─── B
   │     │
   C ─── D
   ```
 
-- **Heaps**: Dual synchronized representation linking array indices directly with binary tree hierarchy positions.
+- **Heaps**: Synchronized dual representation linking array indices directly to binary heap tree positions.
 - **Tries**: Prefix tree branches with highlighted character search paths.
-- **Recursion Trees**: Call stack visualization expanding stack frames depth-by-depth.
-- **Dynamic Programming**: 2D DP table grid filling cell dependencies sequentially.
-- **Geometry**: Coordinate plane sweep line & convex hull vertex connection boundaries.
+- **Recursion Trees**: Call stack depth visualization unpacking stack frames state-by-state.
+- **Dynamic Programming**: 2D DP matrix grid tracking cell dependencies step-by-step.
+- **Geometry**: Coordinate plane sweep lines & convex hull perimeter connections.
 
 ---
 
-## INTERACTION
+## 🧭 INTERACTION
 
-## You're not watching a GIF. You're driving the algorithm.
+## You're not watching a GIF. You're captaining the ship.
 
-CodeLoom gives you full control over algorithm execution. You dictate the pace, rewind steps, inspect variable state, and trace line-by-line execution.
+You dictate the execution speed, rewind past moves, inspect memory variables, and trace code execution line by line.
 
-### Controls & Feedback Loop
-- ⏯️ **Play & Pause**: Start or freeze execution at any state.
+### Captain's Controls
+- ⏯️ **Play & Pause**: Freeze execution mid-algorithm at any point.
 - ⏭️ **Step Forward & Backward**: Jump step-by-step to inspect exact state changes.
-- 🎚️ **Playback Speed Slider**: Smooth control from `0.25x` (deep inspection) to `4.0x` (fast execution).
+- 🎚️ **Playback Speed Slider**: Dial speeds from `0.25x` (deep inspection) to `4.0x` (full-speed execution).
 - 📌 **State & Variable Highlights**: Active operational badge, highlighted code line, current pointers, and time/space complexity notes.
 
 ```text
@@ -143,119 +144,74 @@ Step 05 → Sub-array sorted
 
 ---
 
-## CUSTOM INPUT
+## 🧪 CUSTOM INPUT
 
-## Break the demo. Make it yours.
+## Break the demo. Test your own custom waters.
 
-Generic static examples only get you so far. CodeLoom lets you supply custom datasets to see how algorithms react to your own edge cases.
+Stock datasets are fine for basic training, but real pirates test their own edge cases.
 
 ```text
-Educational Example Dataset:
+Educational Dataset:
 [64, 25, 12, 22, 11]
 
-Customizable Input:
+Your Custom Waters:
 [91, 17, 42, 8, 63]
 ```
 
-- **Customizable Input**: Input your own arrays, target search values, or custom graph nodes/edges.
-- **Educational Example Datasets**: Curated pre-set data crafted to highlight specific algorithmic edge cases (e.g. reverse sorted arrays, unbalanced BSTs).
+- **Customizable Input**: Input custom arrays, target search elements, or graph edge configurations.
+- **Educational Example Datasets**: Pre-configured datasets designed to showcase specific algorithmic edge cases (e.g. reverse sorted arrays, unbalanced BSTs).
 
 ---
 
-## LEARNING CONTENT
+## ⚔️ PRACTICE ARENA
 
-## Code is only half the lesson.
+## Visualization is cool. Now prove you can survive the battle.
 
-Not just code that works. Code you can actually see.
+Watching BFS from the deck is easy. Writing BFS at 2 AM with a blank editor? That's a real New World boss fight.
 
-Every algorithm in CodeLoom bridges theory, visual intuition, and production code:
+The **Practice Arena** (`/practice`) puts your coding skills to the test.
 
-```text
-Theory  →  Visualization  →  Code  →  Practice
-```
-
-For every algorithm, you get:
-- **Intuition & Concept**: Why does this algorithm exist? When should you use it, and when should you avoid it?
-- **Complexity Breakdown**: Best, average, and worst-case time complexity alongside space bounds.
-- **Multi-Language Snippets**: Pseudocode, Java, Python, C++, and JavaScript implementations.
-- **Step-by-Step Visual Execution**: Direct visual sync with code logic.
-
----
-
-## PRACTICE ARENA
-
-## Okay, visualization is cool. Now prove you get it.
-
-Watching BFS is easy. Writing BFS at 2 AM with a blank editor? Different boss fight.
-
-The **Practice Arena** (`/practice`) transitions you from passive observer to active solver.
-
-### 6 Dedicated Practice Modes
-- **Quick Practice**: Fast 3-problem sprint for daily habit building.
-- **Timed Sprint**: Race against the clock (15m, 30m, 45m options).
-- **Topic Focus**: Targeted drills by category (Trees, Graphs, DP, Sorting).
+### 6 Practice Battle Modes
+- **Quick Practice**: Fast 3-problem sprint to maintain daily coding momentum.
+- **Timed Sprint**: Race against the countdown clock (15m, 30m, 45m).
+- **Topic Focus**: Category-specific combat (Trees, Graphs, DP, Sorting).
 - **Streak Builder**: Daily streak maintenance challenges.
-- **Random Shuffle**: Mixed interview-style problem set.
+- **Random Shuffle**: Mixed interview problem set.
 - **Daily Challenge**: Highlighted daily problem with bonus XP multipliers.
 
-### Split-Pane Workspace (`/practice/session/:id`)
-- Resizable problem description & sample test case navigator.
+### Split-Pane Battle Workspace (`/practice/session/:id`)
+- Resizable problem description & test case runner.
 - Multi-language code editor (Java, Python, JavaScript, C++).
-- Instant test case evaluation, submission runner, and celebration modal on completion.
+- Instant test case evaluation, submission feedback, and celebration modal upon victory.
 
 ---
 
-## LEARNING ROADMAP
+## 🏴‍☠️ BOUNTIES & GAMIFICATION
 
-## Don't know what to learn next?
+## Make progress visible. Claim your bounty.
 
-CodeLoom guides your progression with structured topic paths so you never feel lost.
+You shouldn't need to guess if your skills are leveling up. CodeLoom keeps the receipts.
 
-```text
-Onboarding Assessment
-          ↓
-Personalized Learning Path
-          ↓
-Topic Modules
-          ↓
-Visualization & Intuition
-          ↓
-Practice Arena
-          ↓
-Track Mastery
-```
-
-- **Prerequisite Unlocking**: Master fundamental structures (Arrays, Linked Lists) before unlocking advanced topics (Graphs, Segment Trees).
-- **Topic Path Navigator**: Track completed modules, current recommendations, and overall category progress.
+- **XP & Level Progression**: Earn XP for completing visualization steps, daily challenges, and practice arena submissions.
+- **Streaks & Flame Multipliers**: Live flame streak counter with daily bonus multipliers and streak freeze protections.
+- **Contribution Heatmap**: GitHub-style activity grid tracking your daily coding logbook.
+- **Skill Radar Chart**: Dynamic SVG spider radar mapping mastery across DSA domains.
+- **Achievements & Badges**: Unlockable trophies celebrating major coding milestones.
+- **Global Leaderboard**: Live community ranking of top coders across the seas.
 
 ---
 
-## GAMIFICATION
-
-## Make progress visible.
-
-You shouldn't need to wonder whether you're getting better. CodeLoom keeps the receipts.
-
-- **XP & Levels**: Earn XP for completing visualization steps, daily challenges, and practice sessions.
-- **Streaks & Protection**: Live flame streak counter with daily bonus multipliers and streak freeze protections.
-- **Contribution Heatmap**: GitHub-style activity grid tracking daily practice consistency.
-- **Topic Skill Radar**: Custom SVG spider chart detailing category mastery across DSA domains.
-- **Achievements & Badges**: Unlockable trophies celebrating milestones.
-- **Global Leaderboard**: Live community XP ranking.
-
----
-
-## ARCHITECTURE
+## 🛠️ THE SHIP ENGINE & ARCHITECTURE
 
 ## Under the hood
 
-Here is how the CodeLoom React client is structured internally:
+Here is how the CodeLoom React client is engineered under the hood:
 
 ```mermaid
 graph TD
-    User[👤 Learner] --> Router[🛣️ React Router DOM]
+    User[🏴‍☠️ Learner / Captain] --> Router[🛣️ React Router DOM]
 
-    subgraph Pages & Views
+    subgraph Pages & Portals
         Router --> Dashboard[🏠 DashboardPage]
         Router --> Explorer[🔍 AlgorithmsPage / DetailPage]
         Router --> Visualizer[🎬 VisualizationPage]
@@ -288,27 +244,21 @@ graph TD
 
 ---
 
-## UNIVERSAL VISUALIZATION ARCHITECTURE
+## 📜 UNIVERSAL VISUALIZATION CONTRACT
 
-CodeLoom enforces a fundamental architectural rule:
+CodeLoom enforces a strict architectural rule:
 
 > **"The frontend does not invent algorithm state."**
 
-All step execution states, pointer positions, node highlights, and array modifications are driven by backend state generators adhering to a strict contract:
+All execution steps, pointer positions, node highlights, and state changes are driven by backend generators complying with a strict JSON contract:
 
 ```text
 Database Contract  →  Input Schema  →  Generator Registry  →  Snapshot Steps  →  Renderer Registry  →  Structure-Aware Renderer
 ```
 
-### Visualization Contract Interface
-- **`generatorKey`**: Specifies backend algorithm generator strategy (e.g. `bubble-sort`, `bfs`, `avl-tree`).
-- **`rendererKey`**: Maps snapshot payload directly to registered frontend renderer component (e.g. `array`, `graph`, `tree`, `dp-table`).
-- **`inputSchema`**: JSON schema validating custom inputs before submission.
-- **`stepSchema`**: Snapshot schema specifying highlighted elements, current pointers, and step explanation text.
-
 ---
 
-## TECH STACK
+## 💻 TECH STACK
 
 | Technology | Version | Usage & Role in Project |
 | :--- | :--- | :--- |
@@ -316,30 +266,30 @@ Database Contract  →  Input Schema  →  Generator Registry  →  Snapshot Ste
 | **TypeScript** | `~5.7.2` | Strict end-to-end type safety and DTO contracts |
 | **Vite** | `^5.4.11` | Build engine, fast HMR, and production bundler |
 | **TailwindCSS** | `^3.4.17` | Utility-first CSS styling and dark theme system |
-| **Lucide React** | `^0.475.0` | Modern vector icon library |
-| **Axios** | `^1.7.9` | Promise-based HTTP client with JWT interceptors |
-| **React Router** | `^6.28.2` | Declarative client-side routing |
-| **Vitest** | `^2.1.8` | Unit and component testing runner |
-| **Nginx** | `Alpine` | Production static asset web server and proxy |
-| **Docker** | `24+` | Containerization and environment isolation |
+| **Lucide React** | `^0.475.0` | Vector iconography |
+| **Axios** | `^1.7.9` | Promise-based REST client with JWT interceptors |
+| **React Router** | `^6.28.2` | Client-side route navigator |
+| **Vitest** | `^2.1.8` | Unit & component test runner |
+| **Nginx** | `Alpine` | Static asset web server & SPA fallback proxy |
+| **Docker** | `24+` | Containerization & runtime environment |
 
 ---
 
-## PROJECT STRUCTURE
+## 📂 REPOSITORY STRUCTURE
 
 ```text
 frontend/
-├── Dockerfile                 # Multi-stage Nginx container configuration
+├── Dockerfile                 # Multi-stage Nginx container builder
 ├── nginx.conf                 # Production Nginx SPA fallback configuration
 ├── package.json               # Manifest scripts and dependency versions
-├── vite.config.ts             # Vite build & Vitest test runner configuration
+├── vite.config.ts             # Vite configuration & Vitest setup
 └── src/
-    ├── api/                   # Axios API service clients
-    │   ├── apiClient.ts       # Central Axios instance with JWT interceptor
+    ├── api/                   # Axios API service modules
+    │   ├── apiClient.ts       # Central Axios client with JWT interceptors
     │   ├── algorithmService.ts# Catalog & snapshot fetchers
     │   ├── analyticsService.ts# Activity, streak & leaderboard APIs
     │   └── practiceService.ts # Arena session & submission endpoints
-    ├── components/            # Reusable UI component modules
+    ├── components/            # Component Architecture
     │   ├── algorithm/         # Detail panels, code snippet tabs
     │   ├── analytics/         # Activity heatmap, SVG skill radar
     │   ├── layout/            # Navbar, footer, layout shell
@@ -348,33 +298,29 @@ frontend/
     │   └── visualization/     # Canvas & SVG visualizers, RendererRegistry
     ├── context/               # AuthContext & global state providers
     ├── pages/                 # Route page components
-    ├── routes/                # Protected and public route guards
     ├── types/                 # TypeScript DTO models & contract definitions
     └── utils/                 # Storage helpers, date formatters
 ```
 
 ---
 
-## QUICK START
+## ⚡ QUICK START GUIDE
 
 ### Prerequisites
 - **Node.js**: `20.x` or higher
 - **npm**: `10.x` or higher
 
-### 1. Installation
+### 1. Set Sail (Clone & Install)
 
 ```bash
-# Clone repository
 git clone https://github.com/Sukhankar/DSA-VISUALIZER-FRONEND.git
 cd DSA-VISUALIZER-FRONEND
-
-# Install dependencies
 npm install
 ```
 
-### 2. Environment Configuration
+### 2. Environment Setup
 
-Create a `.env` file in the root of the `frontend` directory:
+Create a `.env` file in the root directory:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api/v1
@@ -388,30 +334,28 @@ npm run dev
 
 Open **`http://localhost:5173`** in your browser.
 
-### 4. Build & Preview
+### 4. Production Build & Test
 
 ```bash
-# Type check and build production bundle into dist/
+# Build static assets into dist/
 npm run build
 
-# Preview production build locally
+# Preview production bundle locally
 npm run preview
 
-# Run Vitest unit tests
+# Execute unit tests
 npm run test
 ```
 
 ---
 
-## DOCKER DEPLOYMENT
-
-To build and run the frontend using Docker with Nginx Alpine:
+## 🐳 DOCKER DEPLOYMENT
 
 ```bash
-# 1. Build Docker image
+# 1. Build Nginx Alpine Docker container
 docker build -t codeloom-frontend .
 
-# 2. Run Nginx container
+# 2. Launch container
 docker run -d -p 80:80 \
   -e VITE_API_BASE_URL=http://localhost:8080/api/v1 \
   --name dsa-frontend codeloom-frontend
@@ -421,64 +365,18 @@ Access the application at **`http://localhost`**.
 
 ---
 
-## DEVELOPMENT WORKFLOW
-
-When adding a new algorithm or visualization renderer to CodeLoom:
-
-```text
-Backend Algorithm Contract
-            ↓
-Define Snapshot Schema
-            ↓
-Register Generator (Backend)
-            ↓
-Add Renderer Component to RendererRegistry.ts
-            ↓
-Run Step Conformance & Unit Tests
-```
-
-New algorithms rely on backend contracts and `rendererKey` mapping in `RendererRegistry.ts` rather than hardcoded slug conditional checks.
-
----
-
-## DESIGN PHILOSOPHY
+## ⚓ DESIGN PHILOSOPHY
 
 ## Built for intuition, not just completion.
 
-1. **See state, not just output**: Understanding how data moves in memory builds long-term intuition.
-2. **Understand why, not just what**: Step explanations connect code statements directly with visual pointer movement.
+1. **See state, not just output**: Watching data structure memory state builds true algorithmic intuition.
+2. **Understand why, not just what**: Step explanations connect code statements directly with visual pointer movements.
 3. **Experiment instead of memorizing**: Custom data inputs let learners break assumptions and explore edge cases.
 4. **Practice immediately after learning**: The Practice Arena converts visual understanding into coding execution.
-5. **Track progress over time**: Gamified feedback loops keep learners consistent.
+5. **Track progress over time**: Gamified feedback loops keep learners consistent across the voyage.
 
 ---
 
-## ROADMAP STATUS
-
-### 🧵 Universal Visualization Engine
-
-- [x] Structure-aware renderers (`array`, `pointer-array`, `linked-list`, `tree`, `heap`, `graph`, `dp-table`, `trie`, `recursion-tree`, `geometry`)
-- [x] Centralized `RendererRegistry` mapping contract keys to visual components
-- [x] Input schema configuration panels for custom datasets
-- [x] Step timeline runner with playback speed controls
-- [x] Split-pane Practice Arena session workspace
-- [x] Gamified streak, XP ledger, SVG skill radar & heatmap analytics
-
----
-
-## CONTRIBUTING
-
-Contributions are welcome! If you want to add a new renderer family or improve existing visualizers:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-renderer`)
-3. Commit your changes (`git commit -m 'feat: add new trie visualizer animation'`)
-4. Run tests (`npm run test`) and build check (`npm run build`)
-5. Push to the branch (`git push origin feature/amazing-renderer`)
-6. Open a Pull Request
-
----
-
-## LICENSE
+## 📜 LICENSE
 
 Distributed under the **MIT License**. See `LICENSE` for details.
